@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>顺丰邮寄平台</title>
+    <title>薪寄件</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -53,7 +53,7 @@
         .btn-link:hover { text-decoration: underline; }
         .bottom-nav { display: flex; width: 100%; border-top: 1px solid #dadce0; background-color: #ffffff; padding: 4px 0; }
         .nav-item { flex: 1; padding: 8px 0; text-align: center; cursor: pointer; color: #5f6368; font-size: 12px; font-weight: 400; border-radius: 8px; margin: 0 4px; transition: background-color 0.2s ease, color 0.2s ease; }
-        .nav-item .nav-icon { font-size: 22px; display: block; margin-bottom: 2px; font-family: 'Material Icons'; /* Use Material Icons for nav icons too */ }
+        .nav-item .nav-icon { font-size: 22px; display: block; margin-bottom: 2px; font-family: 'Material Icons'; }
         .nav-item.active { color: #1a73e8; background-color: #e8f0fe; }
         .nav-item:not(.active):hover { background-color: #f1f3f4; }
         .message-list-item { background-color: #fff; padding: 16px; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
@@ -139,14 +139,12 @@
 
                     <div class="form-section">
                         <h3>寄件人企业信息</h3>
-                        <!-- NEW "所在区域" FIELD ADDED HERE -->
                         <div class="form-group">
                             <label>所在区域</label>
                             <div id="company-location-region" class="clickable-field" onclick="openGenericSelectModal('locationRegion')">
-                                <span class="value">顺德本部</span> <!-- Default Value -->
+                                <span class="value">顺德本部</span>
                             </div>
                         </div>
-                        <!-- END NEW FIELD -->
                         <div class="form-group"><label>单位主体</label><div id="company-entity" class="clickable-field" onclick="openGenericSelectModal('company')"><span class="value">默认科技公司A</span></div></div>
                         <div class="form-group"><label>所属部门</label><div id="company-department" class="clickable-field" onclick="openGenericSelectModal('department')"><span class="value">研发部</span></div></div>
                     </div>
@@ -172,6 +170,12 @@
                         <div class="form-group"><label for="cod-date">到付日期</label><input type="date" id="cod-date"></div>
                         <div class="form-group"><label for="cod-sender">寄件人</label><input type="text" id="cod-sender" placeholder="请输入寄件人姓名"></div>
                         <div class="form-group"><label for="cod-receiver">收件人</label><input type="text" id="cod-receiver" placeholder="请输入收件人姓名"></div>
+                        <div class="form-group">
+                            <label>所在区域</label>
+                            <div id="cod-location-region" class="clickable-field" onclick="openGenericSelectModal('codLocationRegion')">
+                                <span class="value">顺德本部</span>
+                            </div>
+                        </div>
                         <div class="form-group"><label>单位主体</label><div id="cod-company-entity" class="clickable-field" onclick="openGenericSelectModal('cod-company')"><span class="value">默认科技公司A</span></div></div>
                         <div class="form-group"><label>所属部门</label><div id="cod-company-department" class="clickable-field" onclick="openGenericSelectModal('cod-department')"><span class="value">研发部</span></div></div>
                         <button class="btn btn-submit" style="margin-top: 20px;" onclick="submitCodInfo()">提交登记</button>
@@ -181,7 +185,7 @@
 
             <div id="page-messages" class="page">
                 <div class="message-list-item"><div class="message-content">您在 <span class="highlight-month">3月</span>份有 <span class="highlight-count">2</span> 笔运单未登记，分别为：SF1234567890123 (运单号)、25元 (费用)；SF9876543210987 (运单号)、75元 (费用)；共100元。</div><div class="message-time">2024-04-01 09:30</div></div>
-                <div class="message-list-item"><div class="message-content">【系统通知】顺丰丰密面单功能已升级，保障您的信息安全。</div><div class="message-time">2024-03-28 15:00</div></div>
+                <div class="message-list-item"><div class="message-content">您在 <span class="highlight-month">2月</span>份有 <span class="highlight-count">1</span> 笔运单未登记，分别为：SF4534567890123 (运单号)：50元 (费用)；共50元。</div><div class="message-time">2024-03-28 15:00</div></div>
             </div>
 
             <div id="page-records" class="page">
@@ -209,31 +213,11 @@
         <input type="hidden" id="editing-address-id">
         <div class="form-group"><label>姓名:</label><input type="text" id="new-addr-name"></div>
         <div class="form-group"><label>电话:</label><input type="tel" id="new-addr-phone"></div>
-        <div class="form-group address-selection-group">
-            <label>所在地区:</label>
-            <div id="new-addr-region-display" class="clickable-field" onclick="openRegionPicker('new-addr')">
-                <span class="placeholder">请选择省/市/区</span>
-            </div>
-            <input type="hidden" id="new-addr-provinceVal"> <input type="hidden" id="new-addr-cityVal"> <input type="hidden" id="new-addr-districtVal">
-        </div>
+        <div class="form-group address-selection-group"><label>所在地区:</label><div id="new-addr-region-display" class="clickable-field" onclick="openRegionPicker('new-addr')"><span class="placeholder">请选择省/市/区</span></div><input type="hidden" id="new-addr-provinceVal"> <input type="hidden" id="new-addr-cityVal"> <input type="hidden" id="new-addr-districtVal"></div>
         <div class="form-group"><label>详细地址:</label><textarea id="new-addr-detail" placeholder="街道、楼牌号等"></textarea></div>
     </div><div class="modal-footer"><button class="btn btn-primary" onclick="saveOrUpdateAddress()">保存</button></div></div></div>
-    
-    <div id="region-picker-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header"><h4>选择地区</h4><span class="modal-close-btn" onclick="closeModal('region-picker-modal')">close</span></div>
-            <div class="modal-body">
-                <div class="form-group"><label for="region-province">省份</label><select id="region-province" onchange="populateCitiesForRegionPicker()"></select></div>
-                <div class="form-group"><label for="region-city">城市</label><select id="region-city" onchange="populateDistrictsForRegionPicker()"></select></div>
-                <div class="form-group"><label for="region-district">区/县</label><select id="region-district"></select></div>
-            </div>
-            <div class="modal-footer"><button class="btn btn-primary" onclick="confirmRegionSelection()">确定</button></div>
-        </div>
-    </div>
-
-    <!-- Re-using company-select-modal for generic selection: LocationRegion, Company, Department -->
+    <div id="region-picker-modal" class="modal"><div class="modal-content"><div class="modal-header"><h4>选择地区</h4><span class="modal-close-btn" onclick="closeModal('region-picker-modal')">close</span></div><div class="modal-body"><div class="form-group"><label for="region-province">省份</label><select id="region-province" onchange="populateCitiesForRegionPicker()"></select></div><div class="form-group"><label for="region-city">城市</label><select id="region-city" onchange="populateDistrictsForRegionPicker()"></select></div><div class="form-group"><label for="region-district">区/县</label><select id="region-district"></select></div></div><div class="modal-footer"><button class="btn btn-primary" onclick="confirmRegionSelection()">确定</button></div></div></div>
     <div id="company-select-modal" class="modal"><div class="modal-content"><div class="modal-header"><h4 id="company-modal-title">选择</h4><span class="modal-close-btn" onclick="closeModal('company-select-modal')">close</span></div><div class="modal-body"><input type="search" id="company-search" placeholder="搜索..."><div id="company-list-content"></div></div></div></div>
-    
     <div id="item-info-modal" class="modal"><div class="modal-content"><div class="modal-header"><h4>物品信息、保价与包装</h4><span class="modal-close-btn" onclick="closeModal('item-info-modal')">close</span></div><div class="modal-body"><div class="form-group"><label for="item-type">物品类型</label><select id="item-type"><option value="文件">文件</option><option value="数码产品">数码产品</option><option value="服饰">服饰</option><option value="日用品">日用品</option><option value="其他">其他</option></select></div><div class="form-group"><label for="item-weight">预估总重量 (kg)</label><input type="number" id="item-weight" value="1" min="0.1" step="0.1"></div><div class="form-group"><label for="item-count">件数</label><input type="number" id="item-count" value="1" min="1"></div><hr style="margin: 20px -24px; border:0; border-top:1px solid #e8eaed;"><h5>保价服务</h5><div class="form-group valuation-options"><label><input type="radio" name="valuation" value="none" checked onchange="toggleCustomValuation()">不保价</label><label><input type="radio" name="valuation" value="tier1" onchange="toggleCustomValuation()">保价金额1-500元 (服务费 ¥2)</label><label><input type="radio" name="valuation" value="tier2" onchange="toggleCustomValuation()">保价金额501-1000元 (服务费 ¥3)</label><label><input type="radio" name="valuation" value="custom" onchange="toggleCustomValuation()">自定义保价 <input type="number" id="custom-valuation-amount" placeholder="金额" style="display:none;" oninput="updateCustomValuationFee()"> <span id="custom-valuation-fee-display" style="font-size:12px; margin-left:5px;"></span></label></div><hr style="margin: 20px -24px; border:0; border-top:1px solid #e8eaed;"><h5>包装服务 (可选)</h5><div class="form-group packaging-options"><label for="packaging-service">选择包装</label><select id="packaging-service"></select></div></div><div class="modal-footer"><button class="btn btn-primary" onclick="confirmItemInfo()">确定</button></div></div></div>
     <div id="pickup-time-modal" class="modal"><div class="modal-content"><div class="modal-header"><h4>选择上门时间</h4><span class="modal-close-btn" onclick="closeModal('pickup-time-modal')">close</span></div><div class="pickup-time-modal-tabs"><div class="pickup-time-modal-tab active" data-day="today">今天</div><div class="pickup-time-modal-tab" data-day="tomorrow">明天</div><div class="pickup-time-modal-tab" data-day="dayAfterTomorrow">后天</div></div><div class="modal-body" id="pickup-time-slots-container-wrapper"><div id="pickup-time-slots-today" class="pickup-time-slots-for-day active"></div><div id="pickup-time-slots-tomorrow" class="pickup-time-slots-for-day"></div><div id="pickup-time-slots-dayAfterTomorrow" class="pickup-time-slots-for-day"></div></div></div></div>
     <div id="record-detail-modal" class="modal"><div class="modal-content"><div class="modal-header"><h4 id="record-detail-modal-title">记录详情</h4><span class="modal-close-btn" onclick="closeModal('record-detail-modal')">close</span></div><div class="modal-body record-detail-modal-body" id="record-detail-content"></div></div></div>
@@ -241,57 +225,30 @@
 
     <script>
         // --- MOCK DATA ---
-        const REGION_DATA = { /* ... (Copied from previous version) ... */ };
-        REGION_DATA["北京市"] = { "北京城区": ["东城区", "西城区", "朝阳区", "海淀区", "丰台区", "石景山区"], "北京郊区": ["门头沟区", "房山区", "通州区", "顺义区", "昌平区", "大兴区", "怀柔区", "平谷区", "密云区", "延庆区"] };
-        REGION_DATA["广东省"] = { "深圳市": ["福田区", "罗湖区", "南山区", "盐田区", "宝安区", "龙岗区"], "广州市": ["越秀区", "荔湾区", "海珠区", "天河区"] };
-        REGION_DATA["上海市"] = { "上海城区": ["黄浦区", "徐汇区", "长宁区", "静安区"], "上海郊区": ["浦东新区", "闵行区"] };
-
-
-        let MOCK_ADDRESS_BOOK = [
-            { id: 1, name: "张三", phone: "13800138000", province: "广东省", city: "深圳市", district: "南山区", detailAddress: "科技园路1号 腾讯大厦", isDefault: true },
-            { id: 2, name: "李四", phone: "13900139000", province: "北京市", city: "北京城区", district: "朝阳区", detailAddress: "建国路88号 SOHO现代城", isDefault: false },
-        ];
+        const REGION_DATA = { "北京市": { "北京城区": ["东城区", "西城区", "朝阳区", "海淀区"], "北京郊区": ["昌平区", "顺义区"] }, "广东省": { "深圳市": ["福田区", "南山区"], "广州市": ["天河区", "越秀区"] }, "上海市": { "上海城区": ["黄浦区", "静安区"], "上海郊区": ["浦东新区"] }};
+        let MOCK_ADDRESS_BOOK = [ { id: 1, name: "张三", phone: "13800138000", province: "广东省", city: "深圳市", district: "南山区", detailAddress: "科技园路1号", isDefault: true }, { id: 2, name: "李四", phone: "13900139000", province: "北京市", city: "北京城区", district: "朝阳区", detailAddress: "建国路88号", isDefault: false },];
         let nextAddressId = 3;
-
-        const MOCK_LOCATIONS = [
-            { id: "sd", name: "顺德本部" }, { id: "bj", name: "北京" }, { id: "cd", name: "成都" }, { id: "jm", name: "江门" },
-            { id: "nn", name: "南宁" }, { id: "sz", name: "深圳" }, { id: "wh", name: "武汉" }, { id: "cs", name: "长沙" },
-            { id: "zz", name: "郑州" }, { id: "cq", name: "重庆" }, { id: "zh", name: "珠海" }, { id: "wuhu", name: "芜湖" }
-        ];
+        const MOCK_LOCATIONS = [ { id: "sd", name: "顺德本部" }, { id: "bj", name: "北京" }, { id: "cd", name: "成都" }, { id: "jm", name: "江门" }, { id: "nn", name: "南宁" }, { id: "sz", name: "深圳" }, { id: "wh", name: "武汉" }, { id: "cs", name: "长沙" }, { id: "zz", name: "郑州" }, { id: "cq", name: "重庆" }, { id: "zh", name: "珠海" }, { id: "wuhu", name: "芜湖" }];
         const MOCK_COMPANIES = [ { id: "comp_a", name: "默认科技公司A" }, { id: "comp_b", name: "创新科技B" }];
         const MOCK_DEPARTMENTS = { "comp_a": [{ id: "dept_a1", name: "研发部" }, { id: "dept_a2", name: "市场部" }], "comp_b": [{ id: "dept_b1", name: "产品部" }]};
         const MOCK_PRODUCT_TYPES = [ "顺丰标快", "顺丰特快", "陆运包裹" ];
         const MOCK_PACKAGING_SERVICES = [ { id: "none", name: "不需要包装服务", cost: 0 }, { id: "F2", name: "防湿损F2", cost: 5 }];
+        let sentRecords = [], codRecords = [];
+        let currentAddressTarget = null, currentSelectedItemInfo = { type: '文件', weight: 1, count: 1, valuationType: 'none', valuationAmount: 0, valuationFee: 0, packagingServiceId: 'none', packagingFee: 0 };
+        let editingAddressId = null, currentPickupTimeDay = 'today', currentRegionPickerTarget = null;
+        let currentGenericSelectionTarget = null, currentGenericSelectionTargetElementId = null;
 
-        let sentRecords = [];
-        let codRecords = [];
-
-        let currentAddressTarget = null; 
-        let currentSelectedItemInfo = { type: '文件', weight: 1, count: 1, valuationType: 'none', valuationAmount: 0, valuationFee: 0, packagingServiceId: 'none', packagingFee: 0 };
-        let editingAddressId = null; 
-        let currentPickupTimeDay = 'today';
-        let currentRegionPickerTarget = null; 
-        let currentGenericSelectionTarget = null; 
-        let currentGenericSelectionTargetElementId = null;
-
-
-        // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
-            initNavigation();
-            initSendPageTabs();
-            initRecordPageTabs();
-            initPickupTimeModalTabs();
-            populateProductTypes();
-            populatePackagingServices();
-            setDefaultSenderReceiver();
+            initNavigation(); initSendPageTabs(); initRecordPageTabs(); initPickupTimeModalTabs();
+            populateProductTypes(); populatePackagingServices(); setDefaultSenderReceiver();
             setDefaultPickupTimeDisplay(); 
             document.getElementById('cod-date').value = new Date().toISOString().split('T')[0];
             
-            // Set default for the new location field on load
-            const locationRegionValueEl = document.getElementById('company-location-region')?.querySelector('.value');
-            if (locationRegionValueEl && MOCK_LOCATIONS.length > 0) {
-                 locationRegionValueEl.textContent = "顺德本部"; // Explicitly set default
-            }
+            const companyLocationRegionEl = document.getElementById('company-location-region')?.querySelector('.value');
+            if (companyLocationRegionEl) companyLocationRegionEl.textContent = "顺德本部";
+            const codLocationRegionEl = document.getElementById('cod-location-region')?.querySelector('.value');
+            if (codLocationRegionEl) codLocationRegionEl.textContent = "顺德本部";
+            
             filterRecords(); 
         });
 
@@ -308,79 +265,74 @@
                  updateRegionDisplay('sender', '', '', ''); 
                  document.getElementById('sender-detail-address').value = '';
             }
-            // Example default receiver (can be cleared or have other logic)
-            if (!document.getElementById('receiver-region').querySelector('.value').textContent.includes('/')) { // Check if already set
+            const receiverRegionValEl = document.getElementById('receiver-region')?.querySelector('.value');
+            if (receiverRegionValEl && !receiverRegionValEl.textContent.includes('/')) { 
                 updateRegionDisplay('receiver', '北京市', '北京城区', '朝阳区');
             }
         }
         
-        // --- Generic Selection Modal Logic (for Location, Company, Department) ---
         function openGenericSelectModal(selectionType) {
             currentGenericSelectionTarget = selectionType;
             const modalTitleEl = document.getElementById('company-modal-title');
             const searchInputEl = document.getElementById('company-search');
-            searchInputEl.value = ''; 
-            searchInputEl.onkeyup = filterGenericList; 
-
+            searchInputEl.value = ''; searchInputEl.onkeyup = filterGenericList; 
             let itemsToRender = [];
             switch (selectionType) {
                 case 'locationRegion':
                     modalTitleEl.textContent = '选择所在区域'; itemsToRender = MOCK_LOCATIONS;
                     currentGenericSelectionTargetElementId = 'company-location-region'; break;
+                case 'codLocationRegion': 
+                    modalTitleEl.textContent = '选择所在区域 (到付)'; itemsToRender = MOCK_LOCATIONS;
+                    currentGenericSelectionTargetElementId = 'cod-location-region'; break;
                 case 'company':
                     modalTitleEl.textContent = '选择单位主体'; itemsToRender = MOCK_COMPANIES;
                     currentGenericSelectionTargetElementId = 'company-entity'; break;
                 case 'department':
                     modalTitleEl.textContent = '选择所属部门';
-                    const companyName = document.getElementById('company-entity').querySelector('.value').textContent;
-                    const company = MOCK_COMPANIES.find(c => c.name === companyName);
-                    itemsToRender = company ? (MOCK_DEPARTMENTS[company.id] || []) : [];
+                    const compName = document.getElementById('company-entity').querySelector('.value').textContent;
+                    const comp = MOCK_COMPANIES.find(c=>c.name===compName); itemsToRender = comp?(MOCK_DEPARTMENTS[comp.id]||[]):[];
                     currentGenericSelectionTargetElementId = 'company-department'; break;
                 case 'cod-company':
                     modalTitleEl.textContent = '选择单位主体 (到付)'; itemsToRender = MOCK_COMPANIES;
                     currentGenericSelectionTargetElementId = 'cod-company-entity'; break;
                 case 'cod-department':
                     modalTitleEl.textContent = '选择所属部门 (到付)';
-                    const codCompName = document.getElementById('cod-company-entity').querySelector('.value').textContent;
-                    const codComp = MOCK_COMPANIES.find(c => c.name === codCompName);
-                    itemsToRender = codComp ? (MOCK_DEPARTMENTS[codComp.id] || []) : [];
+                    const codCompN = document.getElementById('cod-company-entity').querySelector('.value').textContent;
+                    const codC = MOCK_COMPANIES.find(c=>c.name===codCompN); itemsToRender = codC?(MOCK_DEPARTMENTS[codC.id]||[]):[];
                     currentGenericSelectionTargetElementId = 'cod-company-department'; break;
                 default: console.error("Unknown type:", selectionType); return;
             }
-            renderGenericList(itemsToRender);
-            openModal('company-select-modal');
-        }
-
-        function renderGenericList(items, searchTerm = '') {
-            const listEl = document.getElementById('company-list-content'); listEl.innerHTML = '';
-            const filtered = items.filter(i => i.name.toLowerCase().includes(searchTerm.toLowerCase()));
-            if (filtered.length === 0) { listEl.innerHTML = '<div class="modal-list-item" style="text-align:center; color:#5f6368;">无匹配结果</div>'; return; }
-            filtered.forEach(item => {
-                const div = document.createElement('div'); div.classList.add('modal-list-item');
-                div.textContent = item.name; div.onclick = () => selectGenericItem(item);
-                listEl.appendChild(div);
-            });
+            renderGenericList(itemsToRender); openModal('company-select-modal');
         }
         
         function filterGenericList() {
             const term = document.getElementById('company-search').value;
             let items = [];
+            let companyNameForDept, companyForDept; // Declare here for wider scope
             switch (currentGenericSelectionTarget) {
-                case 'locationRegion': items = MOCK_LOCATIONS; break;
+                case 'locationRegion': case 'codLocationRegion': items = MOCK_LOCATIONS; break;
                 case 'company': case 'cod-company': items = MOCK_COMPANIES; break;
                 case 'department':
-                    const compName = document.getElementById('company-entity').querySelector('.value').textContent;
-                    const comp = MOCK_COMPANIES.find(c=>c.name===compName); items = comp?(MOCK_DEPARTMENTS[comp.id]||[]):[]; break;
+                    companyNameForDept = document.getElementById('company-entity').querySelector('.value').textContent;
+                    companyForDept = MOCK_COMPANIES.find(c=>c.name===companyNameForDept); 
+                    items = companyForDept?(MOCK_DEPARTMENTS[companyForDept.id]||[]):[]; 
+                    break;
                 case 'cod-department':
-                    const codCompN = document.getElementById('cod-company-entity').querySelector('.value').textContent;
-                    const codC = MOCK_COMPANIES.find(c=>c.name===codCompN); items = codC?(MOCK_DEPARTMENTS[codC.id]||[]):[]; break;
+                    companyNameForDept = document.getElementById('cod-company-entity').querySelector('.value').textContent; // Re-use variables
+                    companyForDept = MOCK_COMPANIES.find(c=>c.name===companyNameForDept); 
+                    items = companyForDept?(MOCK_DEPARTMENTS[companyForDept.id]||[]):[]; 
+                    break;
+                default: items = [];
             }
             renderGenericList(items, term);
         }
 
         function selectGenericItem(item) {
             if (currentGenericSelectionTargetElementId) {
-                 document.getElementById(currentGenericSelectionTargetElementId).querySelector('.value').textContent = item.name;
+                 const targetValueEl = document.getElementById(currentGenericSelectionTargetElementId).querySelector('.value');
+                 targetValueEl.textContent = item.name;
+                 // No longer need dataset.selectedValue for the simplified validation
+
                  if (currentGenericSelectionTarget === 'company' || currentGenericSelectionTarget === 'cod-company') {
                     const deptFieldId = currentGenericSelectionTarget === 'company' ? 'company-department' : 'cod-company-department';
                     const deptValueEl = document.getElementById(deptFieldId)?.querySelector('.value');
@@ -392,22 +344,40 @@
             }
             closeModal('company-select-modal'); showToast(`已选择: ${item.name}`);
         }
+        renderGenericList = function(items, searchTerm = '') { const listEl = document.getElementById('company-list-content'); listEl.innerHTML = ''; const filtered = items.filter(i => i.name.toLowerCase().includes(searchTerm.toLowerCase())); if (filtered.length === 0) { listEl.innerHTML = '<div class="modal-list-item" style="text-align:center; color:#5f6368;">无匹配结果</div>'; return; } filtered.forEach(item => { const div = document.createElement('div'); div.classList.add('modal-list-item'); div.textContent = item.name; div.onclick = () => selectGenericItem(item); listEl.appendChild(div); });}
+        
+        // Simplified validation: checks if field is empty or contains "请选择"
+        function isFieldValid(elementIdOrValue, isClickableField = false) {
+            let value;
+            if (isClickableField) {
+                const el = document.getElementById(elementIdOrValue);
+                if (!el) return false;
+                const valueEl = el.querySelector('.value');
+                const placeholderEl = el.querySelector('.placeholder');
+                if (placeholderEl && getComputedStyle(placeholderEl).display !== 'none' && placeholderEl.textContent.includes("请选择")) return false; // Explicit placeholder
+                value = valueEl ? valueEl.textContent.trim() : '';
 
-        // --- SUBMIT PACKAGE (Adjusted for new address structure & locationRegion) ---
+            } else { // For direct input/select values
+                value = elementIdOrValue ? String(elementIdOrValue).trim() : '';
+            }
+            return value !== '' && !value.includes("请选择") && value !== "无可选部门";
+        }
+
+
         function submitPackage() { 
-            const senderName = document.getElementById('sender-name').value; 
-            const senderPhone = document.getElementById('sender-phone').value;
+            const senderName = document.getElementById('sender-name').value.trim(); 
+            const senderPhone = document.getElementById('sender-phone').value.trim();
             const senderRegionEl = document.getElementById('sender-region');
             const senderProvince = senderRegionEl.dataset.province; const senderCity = senderRegionEl.dataset.city;
             const senderDistrict = senderRegionEl.dataset.district;
-            const senderDetailAddress = document.getElementById('sender-detail-address').value;
+            const senderDetailAddress = document.getElementById('sender-detail-address').value.trim();
             
-            const receiverName = document.getElementById('receiver-name').value; 
-            const receiverPhone = document.getElementById('receiver-phone').value;
+            const receiverName = document.getElementById('receiver-name').value.trim(); 
+            const receiverPhone = document.getElementById('receiver-phone').value.trim();
             const receiverRegionEl = document.getElementById('receiver-region');
             const receiverProvince = receiverRegionEl.dataset.province; const receiverCity = receiverRegionEl.dataset.city;
             const receiverDistrict = receiverRegionEl.dataset.district;
-            const receiverDetailAddress = document.getElementById('receiver-detail-address').value;
+            const receiverDetailAddress = document.getElementById('receiver-detail-address').value.trim();
             
             const locationRegion = document.getElementById('company-location-region').querySelector('.value').textContent;
             const companyEntity = document.getElementById('company-entity').querySelector('.value').textContent;
@@ -416,18 +386,32 @@
             const pickupTimeDisplay = document.getElementById('pickup-time-display'); 
             const pickupTimeValue = pickupTimeDisplay.dataset.value; 
             const productType = document.getElementById('product-type').value; 
-            const itemInfoText = document.getElementById('item-info-display').querySelector('.value')?.textContent;
+            const itemInfoDisplay = document.getElementById('item-info-display');
+            const itemInfoText = itemInfoDisplay.querySelector('.value')?.textContent || itemInfoDisplay.querySelector('.placeholder')?.textContent;
             const agreeTerms = document.getElementById('agree-terms').checked; 
             
-            const isPlaceholder = (text) => !text || text.includes("请选择") || text.trim() === "顺德本部" && currentGenericSelectionTargetElementId === 'company-location-region' && document.getElementById('company-location-region').querySelector('.placeholder'); // Special check for default location if it should be explicitly selected
+            let missingFields = [];
+            if (!senderName) missingFields.push("寄件人姓名");
+            if (!senderPhone) missingFields.push("寄件人手机");
+            if (!isFieldValid('sender-region', true)) missingFields.push("寄件人所在地区");
+            if (!senderDetailAddress) missingFields.push("寄件人详细地址");
 
-            if (!senderName || !senderPhone || !senderProvince || !senderCity || !senderDistrict || !senderDetailAddress ||
-                !receiverName || !receiverPhone || !receiverProvince || !receiverCity || !receiverDistrict || !receiverDetailAddress ||
-                !pickupTimeValue || !productType || !itemInfoText || itemInfoText.includes("请选择") ||
-                isPlaceholder(locationRegion) || isPlaceholder(companyEntity) || isPlaceholder(companyDepartment)
-            ) { 
-                showToast("请填写所有必填项！确保所有选择已完成。"); return; 
-            } 
+            if (!receiverName) missingFields.push("收件人姓名");
+            if (!receiverPhone) missingFields.push("收件人手机");
+            if (!isFieldValid('receiver-region', true)) missingFields.push("收件人所在地区");
+            if (!receiverDetailAddress) missingFields.push("收件人详细地址");
+
+            if (!isFieldValid(locationRegion)) missingFields.push("寄件人所在区域");
+            if (!isFieldValid(companyEntity)) missingFields.push("单位主体");
+            if (!isFieldValid(companyDepartment)) missingFields.push("所属部门");
+
+            if (!isFieldValid(pickupTimeValue)) missingFields.push("期望上门时间");
+            if (!productType) missingFields.push("产品类型"); // Selects usually have a value
+            if (!itemInfoText || itemInfoText.includes("请选择")) missingFields.push("物品信息");
+            
+            if (missingFields.length > 0) {
+                showToast(`请填写或选择: ${missingFields.join(', ')}`); return;
+            }
             if (!agreeTerms) { showToast("请阅读并同意服务条款！"); return; } 
             
             showToast("正在下单..."); 
@@ -442,7 +426,10 @@
             }; 
             setTimeout(() => { 
                 showToast(`下单成功！运单号：${packageData.id}`); 
-                sentRecords.unshift(packageData); filterRecords(); 
+                sentRecords.unshift(packageData); 
+                if (document.getElementById('page-records').classList.contains('active') && document.querySelector('#page-records .record-tab-button[data-record-type="sent"]').classList.contains('active')) {
+                    filterRecords(); // Update if on sent records tab
+                }
                 document.getElementById('item-info-display').innerHTML = `<span class="placeholder">请选择物品信息、保价与包装</span>`; 
                 currentSelectedItemInfo = { type: '文件', weight: 1, count: 1, valuationType: 'none', valuationAmount: 0, valuationFee: 0, packagingServiceId: 'none', packagingFee: 0 }; 
                 calculateAndUpdatePrice(); document.getElementById('agree-terms').checked = false; 
@@ -452,7 +439,54 @@
             }, 1500); 
         }
         
-        // --- All other JS functions (copied from previous final for completeness) ---
+        function submitCodInfo() { 
+            const trackingNumber = document.getElementById('cod-tracking-number').value.trim(); 
+            const amount = document.getElementById('cod-amount').value; 
+            const date = document.getElementById('cod-date').value; 
+            const sender = document.getElementById('cod-sender').value.trim(); 
+            const receiver = document.getElementById('cod-receiver').value.trim(); 
+            const locationRegionCod = document.getElementById('cod-location-region').querySelector('.value').textContent;
+            const company = document.getElementById('cod-company-entity').querySelector('.value').textContent; 
+            const department = document.getElementById('cod-company-department').querySelector('.value').textContent; 
+            
+            let missingCodFields = [];
+            if (!trackingNumber) missingCodFields.push("运单号码");
+            if (!amount) missingCodFields.push("费用");
+            if (!date) missingCodFields.push("到付日期");
+            if (!sender) missingCodFields.push("寄件人");
+            if (!receiver) missingCodFields.push("收件人");
+
+            if (!isFieldValid(locationRegionCod)) missingCodFields.push("COD所在区域");
+            if (!isFieldValid(company)) missingCodFields.push("COD单位主体");
+            if (!isFieldValid(department)) missingCodFields.push("COD所属部门");
+
+            if (missingCodFields.length > 0) {
+                showToast(`请填写或选择: ${missingCodFields.join(', ')}`); return;
+            }
+            if (parseFloat(amount) <= 0) { showToast("金额必须大于0！"); return; } 
+            if (!/^[a-zA-Z0-9]+$/.test(trackingNumber)) { showToast("运单号格式不正确。"); return; } 
+            
+            showToast("正在提交登记..."); 
+            const codData = { 
+                id: trackingNumber.toUpperCase(), amount: `¥${parseFloat(amount).toFixed(2)}`, date: date, 
+                sender: sender, receiver: receiver, locationRegion: locationRegionCod, company: company, 
+                department: department, registrationTimestamp: new Date().toISOString() 
+            }; 
+            setTimeout(() => { 
+                showToast(`到付信息登记成功: ${codData.id}`); 
+                codRecords.unshift(codData); 
+                 if (document.getElementById('page-records').classList.contains('active') && document.querySelector('#page-records .record-tab-button[data-record-type="cod"]').classList.contains('active')) {
+                    filterRecords(); // Update if on COD records tab
+                }
+                document.getElementById('cod-tracking-number').value = ''; document.getElementById('cod-amount').value = ''; 
+                document.getElementById('cod-sender').value = ''; document.getElementById('cod-receiver').value = '';
+                document.getElementById('cod-location-region').querySelector('.value').textContent = "顺德本部";
+                document.getElementById('cod-company-entity').querySelector('.value').textContent = "默认科技公司A"; 
+                document.getElementById('cod-company-department').querySelector('.value').textContent = "研发部";
+            }, 1500); 
+        }
+        
+        // --- (All other JS functions like populateProductTypes, etc. from previous version) ---
         populateProductTypes = function() { const select = document.getElementById('product-type'); select.innerHTML = ''; MOCK_PRODUCT_TYPES.forEach(type => { const option = document.createElement('option'); option.value = type; option.textContent = type; if (type === "顺丰标快") option.selected = true; select.appendChild(option); }); }
         setDefaultPickupTimeDisplay = function() { document.getElementById('pickup-time-display').innerHTML = `<span class="placeholder">请选择上门时间</span>`; }
         populatePackagingServices = function() { const select = document.getElementById('packaging-service'); select.innerHTML = ''; MOCK_PACKAGING_SERVICES.forEach(service => { const option = document.createElement('option'); option.value = service.id; option.textContent = `${service.name} (+¥${service.cost})`; select.appendChild(option); }); }
@@ -467,7 +501,7 @@
         populateCitiesForRegionPicker = function() { const province = document.getElementById('region-province').value; const citySelect = document.getElementById('region-city'); citySelect.innerHTML = '<option value="">请选择城市</option>'; document.getElementById('region-district').innerHTML = '<option value="">请选择区/县</option>'; if (province && REGION_DATA[province]) { Object.keys(REGION_DATA[province]).forEach(city => { const option = document.createElement('option'); option.value = city; option.textContent = city; citySelect.appendChild(option); }); } }
         populateDistrictsForRegionPicker = function() { const province = document.getElementById('region-province').value; const city = document.getElementById('region-city').value; const districtSelect = document.getElementById('region-district'); districtSelect.innerHTML = '<option value="">请选择区/县</option>'; if (province && city && REGION_DATA[province] && REGION_DATA[province][city]) { REGION_DATA[province][city].forEach(district => { const option = document.createElement('option'); option.value = district; option.textContent = district; districtSelect.appendChild(option); }); } }
         confirmRegionSelection = function() { const province = document.getElementById('region-province').value; const city = document.getElementById('region-city').value; const district = document.getElementById('region-district').value; if (!province || !city || !district) { showToast("请选择完整的省市区信息。"); return; } updateRegionDisplay(currentRegionPickerTarget, province, city, district); closeModal('region-picker-modal'); }
-        updateRegionDisplay = function(targetPrefix, province, city, district) { const displayElement = document.getElementById(`${targetPrefix}-region`); const displayElementModal = document.getElementById(`${targetPrefix}-region-display`); const displayText = (province && city && district) ? `${province} / ${city} / ${district}` : '<span class="placeholder">请选择省/市/区</span>'; if (displayElement) { if (province && city && district) { displayElement.innerHTML = `<span class="value">${displayText}</span>`; } else { displayElement.innerHTML = displayText; } displayElement.dataset.province = province; displayElement.dataset.city = city; displayElement.dataset.district = district; } if (displayElementModal) { if (province && city && district) { displayElementModal.innerHTML = `<span class="value">${displayText}</span>`; } else { displayElementModal.innerHTML = displayText; } document.getElementById('new-addr-provinceVal').value = province; document.getElementById('new-addr-cityVal').value = city; document.getElementById('new-addr-districtVal').value = district;} } // Corrected hidden input IDs
+        updateRegionDisplay = function(targetPrefix, province, city, district) { const displayElement = document.getElementById(`${targetPrefix}-region`); const displayElementModal = document.getElementById(`${targetPrefix}-region-display`); const displayText = (province && city && district) ? `${province} / ${city} / ${district}` : '<span class="placeholder">请选择省/市/区</span>'; if (displayElement) { if (province && city && district) { displayElement.innerHTML = `<span class="value">${displayText}</span>`; } else { displayElement.innerHTML = displayText; } displayElement.dataset.province = province; displayElement.dataset.city = city; displayElement.dataset.district = district; } if (displayElementModal) { if (province && city && district) { displayElementModal.innerHTML = `<span class="value">${displayText}</span>`; } else { displayElementModal.innerHTML = displayText; } document.getElementById('new-addr-provinceVal').value = province; document.getElementById('new-addr-cityVal').value = city; document.getElementById('new-addr-districtVal').value = district;} }
         openAddressBookModal = function(target) { currentAddressTarget = target; renderAddressBook(); document.getElementById('address-search').value = ''; openModal('address-book-modal');}
         renderAddressBook = function(searchTerm = '') {const listElement = document.getElementById('address-list'); listElement.innerHTML = ''; const filteredAddresses = MOCK_ADDRESS_BOOK.filter(addr => addr.name.toLowerCase().includes(searchTerm.toLowerCase()) || addr.phone.includes(searchTerm) || (addr.province + addr.city + addr.district + addr.detailAddress).toLowerCase().includes(searchTerm.toLowerCase())).sort((a,b) => b.isDefault - a.isDefault || a.name.localeCompare(b.name, 'zh-CN')); if (filteredAddresses.length === 0) { listElement.innerHTML = '<div class="modal-list-item" style="text-align:center; color:#5f6368; padding: 20px 0;">无匹配结果或地址薄为空</div>'; return; } filteredAddresses.forEach(addr => {const item = document.createElement('div'); item.classList.add('modal-list-item'); let defaultTag = addr.isDefault ? '<span class="default-tag">默认</span>' : ''; const fullAddr = `${addr.province || ''} ${addr.city || ''} ${addr.district || ''} ${addr.detailAddress || ''}`; item.innerHTML = `<div class="address-item-details" onclick="selectAddress(${addr.id})"><strong>${addr.name}</strong>${defaultTag} <span style="color:#5f6368; font-size:14px;">(${addr.phone})</span><br><small style="color:#5f6368; display:block; margin-top:2px;">${fullAddr.trim()}</small></div><div class="address-item-actions">${!addr.isDefault ? `<button class="btn-link" onclick="setAsDefaultAddress(${addr.id})">设为默认</button>` : ''}<button class="btn-link" onclick="openAddEditAddressModal(${addr.id})">修改</button><button class="btn-link" style="color:#d93025;" onclick="deleteAddress(${addr.id})">删除</button></div>`; listElement.appendChild(item); });}
         filterAddressBook = function() { renderAddressBook(document.getElementById('address-search').value); }
@@ -485,10 +519,9 @@
         updateCustomValuationFee = function() { const amount = parseFloat(document.getElementById('custom-valuation-amount').value); const feeDisplay = document.getElementById('custom-valuation-fee-display'); if (amount > 0) { let fee = Math.max(1, Math.min(20, amount * 0.01)); feeDisplay.textContent = `(服务费 ¥${fee.toFixed(2)})`; } else { feeDisplay.textContent = ''; }}
         confirmItemInfo = function() { currentSelectedItemInfo.type = document.getElementById('item-type').value; currentSelectedItemInfo.weight = parseFloat(document.getElementById('item-weight').value) || 1; currentSelectedItemInfo.count = parseInt(document.getElementById('item-count').value) || 1; const selectedValuationRadio = document.querySelector('input[name="valuation"]:checked'); currentSelectedItemInfo.valuationType = selectedValuationRadio.value; currentSelectedItemInfo.valuationAmount = 0; currentSelectedItemInfo.valuationFee = 0; if (currentSelectedItemInfo.valuationType === 'tier1') { currentSelectedItemInfo.valuationFee = 2; } else if (currentSelectedItemInfo.valuationType === 'tier2') { currentSelectedItemInfo.valuationFee = 3; } else if (currentSelectedItemInfo.valuationType === 'custom') { currentSelectedItemInfo.valuationAmount = parseFloat(document.getElementById('custom-valuation-amount').value) || 0; if (currentSelectedItemInfo.valuationAmount > 0) { currentSelectedItemInfo.valuationFee = Math.max(1, Math.min(20, currentSelectedItemInfo.valuationAmount * 0.01)); } else { currentSelectedItemInfo.valuationType = 'none';}} currentSelectedItemInfo.packagingServiceId = document.getElementById('packaging-service').value; const selectedPackaging = MOCK_PACKAGING_SERVICES.find(s => s.id === currentSelectedItemInfo.packagingServiceId); currentSelectedItemInfo.packagingFee = selectedPackaging ? selectedPackaging.cost : 0; let displayString = `${currentSelectedItemInfo.type}，${currentSelectedItemInfo.weight}kg，${currentSelectedItemInfo.count}件`; if (currentSelectedItemInfo.valuationType !== 'none') { let valText = ''; if (currentSelectedItemInfo.valuationType === 'tier1') valText = '保价(≤500)'; else if (currentSelectedItemInfo.valuationType === 'tier2') valText = '保价(≤1000)'; else if (currentSelectedItemInfo.valuationType === 'custom' && currentSelectedItemInfo.valuationAmount > 0) valText = `保价(¥${currentSelectedItemInfo.valuationAmount})`; if (valText) displayString += `，${valText}`; } if (selectedPackaging && selectedPackaging.id !== 'none') { displayString += `，${selectedPackaging.name.split(' ')[0]}`; } const displayElement = document.getElementById('item-info-display'); displayElement.innerHTML = `<span class="value">${displayString}</span>`; calculateAndUpdatePrice(); closeModal('item-info-modal'); showToast("物品信息已更新");}
         calculateAndUpdatePrice = function() { const basePrice = 12; const weightCharge = Math.max(0, (currentSelectedItemInfo.weight - 1) * 2); let totalItemsCost = (basePrice + weightCharge) * currentSelectedItemInfo.count; let estimatedPrice = totalItemsCost + currentSelectedItemInfo.valuationFee + currentSelectedItemInfo.packagingFee; document.getElementById('estimated-price').textContent = `¥${estimatedPrice.toFixed(2)}`;}
-        submitCodInfo = function() { const trackingNumber = document.getElementById('cod-tracking-number').value.trim(); const amount = document.getElementById('cod-amount').value; const date = document.getElementById('cod-date').value; const sender = document.getElementById('cod-sender').value.trim(); const receiver = document.getElementById('cod-receiver').value.trim(); const company = document.getElementById('cod-company-entity').querySelector('.value').textContent; const department = document.getElementById('cod-company-department').querySelector('.value').textContent; if (!trackingNumber || !amount || !date || !sender || !receiver ) { showToast("请填写所有必填项！"); return; } if (parseFloat(amount) <= 0) { showToast("金额必须大于0！"); return; } if (!/^[a-zA-Z0-9]+$/.test(trackingNumber)) { showToast("运单号格式不正确 (仅限字母和数字)。"); return; } showToast("正在提交登记..."); const codData = { id: trackingNumber.toUpperCase(), amount: `¥${parseFloat(amount).toFixed(2)}`, date: date, sender: sender, receiver: receiver, company: company, department: department, registrationTimestamp: new Date().toISOString() }; setTimeout(() => { showToast(`到付信息登记成功: ${codData.id}`); codRecords.unshift(codData); filterRecords(); document.getElementById('cod-tracking-number').value = ''; document.getElementById('cod-amount').value = ''; document.getElementById('cod-sender').value = ''; document.getElementById('cod-receiver').value = '';}, 1500); }
         getRelativeDateGroup = function(isoTimestampString) {const recordDate = new Date(isoTimestampString); const today = new Date(); const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1); today.setHours(0,0,0,0); yesterday.setHours(0,0,0,0); recordDate.setHours(0,0,0,0); if (recordDate.getTime() === today.getTime()) return "今天"; if (recordDate.getTime() === yesterday.getTime()) return "昨天"; return recordDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' });}
         renderGroupedRecords = function(allRecords, listElementId, type, searchTerm = '') { const listElement = document.getElementById(listElementId); let recordsToDisplay = allRecords; if (searchTerm) { recordsToDisplay = allRecords.filter(record => { return Object.values(record).some(value => String(value).toLowerCase().includes(searchTerm) || (record.senderDetails && Object.values(record.senderDetails).some(sdVal => String(sdVal).toLowerCase().includes(searchTerm))) || (record.receiverDetails && Object.values(record.receiverDetails).some(rdVal => String(rdVal).toLowerCase().includes(searchTerm))) ); }); } listElement.innerHTML = ''; if (recordsToDisplay.length === 0) { listElement.innerHTML = `<div class="no-records">${searchTerm ? '无匹配搜索结果' : `暂无${type === 'sent' ? '寄件' : '到付登记'}记录`}</div>`; return; } recordsToDisplay.sort((a, b) => new Date(b.submissionTimestamp || b.registrationTimestamp) - new Date(a.submissionTimestamp || a.registrationTimestamp)); const groupedRecords = {}; recordsToDisplay.forEach(record => { const groupKey = getRelativeDateGroup(record.submissionTimestamp || record.registrationTimestamp); if (!groupedRecords[groupKey]) { groupedRecords[groupKey] = []; } groupedRecords[groupKey].push(record); }); const groupOrder = ["今天", "昨天"]; const sortedGroupKeys = Object.keys(groupedRecords).sort((a, b) => { const indexA = groupOrder.indexOf(a); const indexB = groupOrder.indexOf(b); if (indexA !== -1 && indexB !== -1) return indexA - indexB; if (indexA !== -1) return -1; if (indexB !== -1) return 1; const dateAFromGroup = groupedRecords[a][0]; const dateBFromGroup = groupedRecords[b][0]; if (dateAFromGroup && dateBFromGroup) { return new Date(dateBFromGroup.submissionTimestamp || dateBFromGroup.registrationTimestamp) - new Date(dateAFromGroup.submissionTimestamp || dateAFromGroup.registrationTimestamp); } return 0; }); sortedGroupKeys.forEach(groupKey => { const groupHeader = document.createElement('div'); groupHeader.classList.add('record-group'); groupHeader.innerHTML = `<h4>${groupKey}</h4>`; listElement.appendChild(groupHeader); groupedRecords[groupKey].forEach(record => { const item = document.createElement('div'); item.classList.add('record-list-item'); item.dataset.recordId = record.id; item.dataset.recordType = type; if (type === 'sent') { item.innerHTML = `<div class="record-line"><span class="record-label">运单号:</span><span class="record-value">${record.id}</span></div><div class="record-line"><span class="record-label">产品:</span><span class="record-value">${record.productType || 'N/A'}</span></div><div class="record-line"><span class="record-label">收件人:</span><span class="record-value">${record.receiverDetails ? record.receiverDetails.name : (record.receiver || "").split('(')[0].trim()}</span></div><div class="record-status">${record.status} - ${new Date(record.submissionTimestamp).toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'})}</div>`; } else { item.innerHTML = `<div class="record-line"><span class="record-label">运单号:</span><span class="record-value">${record.id}</span></div><div class="record-line"><span class="record-label">收件人:</span><span class="record-value">${record.receiver}</span></div><div class="record-line"><span class="record-label">金额:</span><span class="record-value">${record.amount}</span></div><div class="record-status">登记于 ${new Date(record.registrationTimestamp).toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'})}</div>`; } item.onclick = () => showRecordDetail(record.id, type); listElement.appendChild(item); }); });}
-        showRecordDetail = function(recordId, recordType) { let record; if (recordType === 'sent') { record = sentRecords.find(r => r.id === recordId); } else { record = codRecords.find(r => r.id === recordId); } if (!record) { showToast("记录未找到！"); return; } const detailContent = document.getElementById('record-detail-content'); detailContent.innerHTML = ''; let detailsHtml = ''; if (recordType === 'sent') { document.getElementById('record-detail-modal-title').textContent = '寄件记录详情'; const senderAddr = record.senderDetails ? `${record.senderDetails.province || ''} ${record.senderDetails.city || ''} ${record.senderDetails.district || ''} ${record.senderDetails.detail || ''}`.trim() : 'N/A'; const receiverAddr = record.receiverDetails ? `${record.receiverDetails.province || ''} ${record.receiverDetails.city || ''} ${record.receiverDetails.district || ''} ${record.receiverDetails.detail || ''}`.trim() : 'N/A'; detailsHtml = `<div class="detail-line"><span class="detail-label">运单号:</span><span class="detail-value">${record.id}</span></div><div class="detail-line"><span class="detail-label">寄件人:</span><span class="detail-value">${record.senderDetails ? record.senderDetails.name : 'N/A'} (${record.senderDetails ? record.senderDetails.phone : 'N/A' })</span></div><div class="detail-line"><span class="detail-label">寄件地址:</span><span class="detail-value">${senderAddr}</span></div><div class="detail-line"><span class="detail-label">所在区域:</span><span class="detail-value">${record.locationRegion || '-'}</span></div><div class="detail-line"><span class="detail-label">单位主体:</span><span class="detail-value">${record.companyEntity || '-'}</span></div><div class="detail-line"><span class="detail-label">所属部门:</span><span class="detail-value">${record.companyDepartment || '-'}</span></div><div class="detail-line"><span class="detail-label">收件人:</span><span class="detail-value">${record.receiverDetails ? record.receiverDetails.name : 'N/A'} (${record.receiverDetails ? record.receiverDetails.phone : 'N/A' })</span></div><div class="detail-line"><span class="detail-label">收件地址:</span><span class="detail-value">${receiverAddr}</span></div><div class="detail-line"><span class="detail-label">产品类型:</span><span class="detail-value">${record.productType}</span></div><div class="detail-line"><span class="detail-label">物品信息:</span><span class="detail-value">${record.items}</span></div><div class="detail-line"><span class="detail-label">预估总价:</span><span class="detail-value">${record.price}</span></div><div class="detail-line"><span class="detail-label">上门时间:</span><span class="detail-value">${record.pickupTime}</span></div><div class="detail-line"><span class="detail-label">下单时间:</span><span class="detail-value">${new Date(record.submissionTimestamp).toLocaleString('zh-CN', { year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' })}</span></div><div class="detail-line"><span class="detail-label">状态:</span><span class="detail-value">${record.status}</span></div>`; } else { document.getElementById('record-detail-modal-title').textContent = '到付登记详情'; detailsHtml = `<div class="detail-line"><span class="detail-label">运单号码:</span><span class="detail-value">${record.id}</span></div><div class="detail-line"><span class="detail-label">费用:</span><span class="detail-value">${record.amount}</span></div><div class="detail-line"><span class="detail-label">到付日期:</span><span class="detail-value">${new Date(record.date).toLocaleDateString('zh-CN')}</span></div><div class="detail-line"><span class="detail-label">寄件人:</span><span class="detail-value">${record.sender}</span></div><div class="detail-line"><span class="detail-label">收件人:</span><span class="detail-value">${record.receiver}</span></div><div class="detail-line"><span class="detail-label">单位主体:</span><span class="detail-value">${record.company}</span></div><div class="detail-line"><span class="detail-label">所属部门:</span><span class="detail-value">${record.department}</span></div><div class="detail-line"><span class="detail-label">登记时间:</span><span class="detail-value">${new Date(record.registrationTimestamp).toLocaleString('zh-CN', { year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' })}</span></div>`; } detailContent.innerHTML = detailsHtml; openModal('record-detail-modal'); }
+        showRecordDetail = function(recordId, recordType) { let record; if (recordType === 'sent') { record = sentRecords.find(r => r.id === recordId); } else { record = codRecords.find(r => r.id === recordId); } if (!record) { showToast("记录未找到！"); return; } const detailContent = document.getElementById('record-detail-content'); detailContent.innerHTML = ''; let detailsHtml = ''; if (recordType === 'sent') { document.getElementById('record-detail-modal-title').textContent = '寄件记录详情'; const senderAddr = record.senderDetails ? `${record.senderDetails.province || ''} ${record.senderDetails.city || ''} ${record.senderDetails.district || ''} ${record.senderDetails.detail || ''}`.trim() : 'N/A'; const receiverAddr = record.receiverDetails ? `${record.receiverDetails.province || ''} ${record.receiverDetails.city || ''} ${record.receiverDetails.district || ''} ${record.receiverDetails.detail || ''}`.trim() : 'N/A'; detailsHtml = `<div class="detail-line"><span class="detail-label">运单号:</span><span class="detail-value">${record.id}</span></div><div class="detail-line"><span class="detail-label">寄件人:</span><span class="detail-value">${record.senderDetails ? record.senderDetails.name : 'N/A'} (${record.senderDetails ? record.senderDetails.phone : 'N/A' })</span></div><div class="detail-line"><span class="detail-label">寄件地址:</span><span class="detail-value">${senderAddr}</span></div><div class="detail-line"><span class="detail-label">所在区域:</span><span class="detail-value">${record.locationRegion || '-'}</span></div><div class="detail-line"><span class="detail-label">单位主体:</span><span class="detail-value">${record.companyEntity || '-'}</span></div><div class="detail-line"><span class="detail-label">所属部门:</span><span class="detail-value">${record.companyDepartment || '-'}</span></div><div class="detail-line"><span class="detail-label">收件人:</span><span class="detail-value">${record.receiverDetails ? record.receiverDetails.name : 'N/A'} (${record.receiverDetails ? record.receiverDetails.phone : 'N/A' })</span></div><div class="detail-line"><span class="detail-label">收件地址:</span><span class="detail-value">${receiverAddr}</span></div><div class="detail-line"><span class="detail-label">产品类型:</span><span class="detail-value">${record.productType}</span></div><div class="detail-line"><span class="detail-label">物品信息:</span><span class="detail-value">${record.items}</span></div><div class="detail-line"><span class="detail-label">预估总价:</span><span class="detail-value">${record.price}</span></div><div class="detail-line"><span class="detail-label">上门时间:</span><span class="detail-value">${record.pickupTime}</span></div><div class="detail-line"><span class="detail-label">下单时间:</span><span class="detail-value">${new Date(record.submissionTimestamp).toLocaleString('zh-CN', { year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' })}</span></div><div class="detail-line"><span class="detail-label">状态:</span><span class="detail-value">${record.status}</span></div>`; } else { document.getElementById('record-detail-modal-title').textContent = '到付登记详情'; detailsHtml = `<div class="detail-line"><span class="detail-label">运单号码:</span><span class="detail-value">${record.id}</span></div><div class="detail-line"><span class="detail-label">费用:</span><span class="detail-value">${record.amount}</span></div><div class="detail-line"><span class="detail-label">到付日期:</span><span class="detail-value">${new Date(record.date).toLocaleDateString('zh-CN')}</span></div><div class="detail-line"><span class="detail-label">寄件人:</span><span class="detail-value">${record.sender}</span></div><div class="detail-line"><span class="detail-label">收件人:</span><span class="detail-value">${record.receiver}</span></div><div class="detail-line"><span class="detail-label">所在区域:</span><span class="detail-value">${record.locationRegion || '-'}</span></div><div class="detail-line"><span class="detail-label">单位主体:</span><span class="detail-value">${record.company}</span></div><div class="detail-line"><span class="detail-label">所属部门:</span><span class="detail-value">${record.department}</span></div><div class="detail-line"><span class="detail-label">登记时间:</span><span class="detail-value">${new Date(record.registrationTimestamp).toLocaleString('zh-CN', { year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' })}</span></div>`; } detailContent.innerHTML = detailsHtml; openModal('record-detail-modal'); }
 
     </script>
 </body>
