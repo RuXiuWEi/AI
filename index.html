@@ -1,392 +1,495 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>待办事项</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>顺丰邮寄平台</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <!-- Font Awesome CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css ">
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f9f9f9;
-      color: #333;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    .dark-mode {
-      background-color: #1e1e1e;
-      color: #eee;
-    }
-
-    h1 {
-      text-align: center;
-    }
-
-    .todo-container {
-      max-width: 700px;
-      margin: auto;
-      background: white;
-      padding: 20px 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      transition: background-color 0.3s;
-    }
-
-    .dark-mode .todo-container {
-      background-color: #2d2d2d;
-    }
-
-    .todo-form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
-
-    input[type="text"],
-    input[type="date"],
-    select {
-      flex: 1 1 150px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-
-    button.add-btn,
-    button.sort-btn,
-    button.theme-btn {
-      padding: 10px 15px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 1em;
-    }
-
-    button.add-btn {
-      background-color: #28a745;
-      color: white;
-    }
-
-    button.sort-btn {
-      background-color: #007bff;
-      color: white;
-    }
-
-    button.theme-btn {
-      background-color: #6c757d;
-      color: white;
-    }
-
-    ul {
-      list-style-type: none;
-      padding: 0;
-      margin-top: 20px;
-    }
-
-    li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px;
-      border-bottom: 1px solid #eee;
-      flex-wrap: wrap;
-      transition: background 0.3s ease;
-    }
-
-    .dark-mode li {
-      border-bottom: 1px solid #444;
-    }
-
-    li:hover {
-      background-color: #f1f1f1;
-    }
-
-    .dark-mode li:hover {
-      background-color: #3a3a3a;
-    }
-
-    .todo-main {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .todo-main span {
-      font-size: 1.1em;
-      cursor: pointer;
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .todo-meta {
-      font-size: 0.9em;
-      color: #666;
-    }
-
-    .todo-actions button {
-      margin-left: 8px;
-      background: none;
-      border: none;
-      font-size: 1.2em;
-      cursor: pointer;
-      color: #888;
-      transition: color 0.3s ease;
-    }
-
-    .todo-actions button:hover {
-      color: #333;
-    }
-
-    .completed span {
-      text-decoration: line-through;
-      color: gray;
-    }
-
-    /* 弹窗样式 */
-    .modal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      display: none;
-    }
-
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 500px;
-    }
-
-    .dark-mode .modal-content {
-      background: #333;
-      color: #eee;
-    }
-
-    .modal-content input,
-    .modal-content select {
-      display: block;
-      width: 100%;
-      margin-bottom: 10px;
-      padding: 8px;
-    }
-
-    .modal-buttons {
-      text-align: right;
-      margin-top: 10px;
-    }
-
-    .modal-buttons button {
-      margin-left: 10px;
-      padding: 6px 12px;
-      font-size: 1em;
-    }
-
-    @media (max-width: 600px) {
-      .todo-form {
-        flex-direction: column;
-        align-items: stretch;
-      }
-    }
-  </style>
+    <style>
+        /* --- Google/Gemini Inspired UI Refresh (Copied from previous final mobile version) --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body { font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; background-color: #e8eaed; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 20px 0; }
+        .app-container { width: 417px; height: 900px; background-color: #ffffff; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        .page-content { flex-grow: 1; overflow-y: auto; padding: 20px; background-color: #f8f9fa; }
+        .page { display: none; height: 100%; }
+        .page.active { display: block; }
+        .send-page-tabs, .record-tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #dadce0; }
+        .send-page-tab, .record-tab-button { flex: 1; padding: 12px 10px; text-align: center; cursor: pointer; font-weight: 500; color: #5f6368; background-color: transparent; border-bottom: 3px solid transparent; font-size: 14px; transition: color 0.2s ease, border-color 0.2s ease; }
+        .send-page-tab.active, .record-tab-button.active { color: #1a73e8; border-bottom-color: #1a73e8; }
+        .send-tab-content { display: none; }
+        .send-tab-content.active { display: block; }
+        .form-section { background-color: #ffffff; padding: 18px; margin-bottom: 16px; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .form-section h3 { font-size: 18px; color: #202124; margin-bottom: 16px; padding-bottom: 8px; border-bottom: none; font-weight: 500; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 13px; color: #5f6368; margin-bottom: 6px; font-weight: 500; }
+        .form-group input[type="text"], .form-group input[type="tel"], .form-group input[type="number"], .form-group input[type="date"], .form-group select, .form-group textarea { width: 100%; padding: 12px 14px; border: 1px solid #dadce0; border-radius: 8px; font-size: 15px; background-color: #f8f9fa; color: #202124; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #1a73e8; box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2); }
+        .form-group textarea { min-height: 70px; }
+        .clickable-field { padding: 12px 14px; border: 1px solid #dadce0; border-radius: 8px; background-color: #fff; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 15px; min-height: 48px; }
+        .clickable-field .placeholder { color: #70757a; }
+        .clickable-field .value { color: #202124; }
+        .clickable-field::after { content: 'chevron_right'; font-family: 'Material Icons', sans-serif; color: #5f6368; font-weight: normal; font-size: 22px; line-height: 1; }
+        .address-selection-group { margin-bottom: 5px; }
+        .payment-method { padding: 12px 14px; border: 1px solid #dadce0; border-radius: 8px; background-color: #f1f3f4; color: #3c4043; font-size: 15px; }
+        .send-package-bottom-bar { background-color: #ffffff; padding: 16px 20px; border-top: 1px solid #dadce0; margin-top: 10px; }
+        .price-estimate { font-size: 15px; margin-bottom: 12px; color: #202124; }
+        .price-estimate span { font-weight: 500; color: #d93025; font-size: 20px; }
+        .terms-agreement { display: flex; align-items: center; font-size: 13px; margin-bottom: 18px; color: #5f6368; }
+        .terms-agreement input[type="checkbox"] { margin-right: 10px; width: 18px; height: 18px; accent-color: #1a73e8; }
+        .terms-agreement a { color: #1a73e8; text-decoration: none; }
+        .terms-agreement a:hover { text-decoration: underline; }
+        .btn { display: block; width: 100%; padding: 12px 20px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 500; text-align: center; cursor: pointer; transition: background-color 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .btn:hover { background-color: #185abc; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+        .btn:active { background-color: #174ea6; }
+        .btn:disabled { background-color: #e0e0e0; color: #a0a0a0; cursor: not-allowed; box-shadow: none; }
+        .btn-submit { background-color: #34a853; }
+        .btn-submit:hover { background-color: #2c8a4e; }
+        .btn-submit:active { background-color: #257543; }
+        .btn-small { padding: 6px 12px; font-size: 13px; background-color: #5f6368; color:white; border:none; border-radius:6px; cursor: pointer; transition: background-color 0.2s ease; }
+        .btn-small:hover { background-color: #3c4043; }
+        .btn-link { background: none; border: none; color: #1a73e8; cursor: pointer; padding: 0; font-size: 14px; font-weight: 500; }
+        .btn-link:hover { text-decoration: underline; }
+        .bottom-nav { display: flex; width: 100%; border-top: 1px solid #dadce0; background-color: #ffffff; padding: 4px 0; }
+        .nav-item { flex: 1; padding: 8px 0; text-align: center; cursor: pointer; color: #5f6368; font-size: 12px; font-weight: 400; border-radius: 8px; margin: 0 4px; transition: background-color 0.2s ease, color 0.2s ease; }
+        .nav-item .nav-icon { font-size: 22px; display: block; margin-bottom: 2px; font-family: 'Material Icons'; /* Use Material Icons for nav icons too */ }
+        .nav-item.active { color: #1a73e8; background-color: #e8f0fe; }
+        .nav-item:not(.active):hover { background-color: #f1f3f4; }
+        .message-list-item { background-color: #fff; padding: 16px; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .message-content { font-size: 15px; color: #202124; margin-bottom: 8px; line-height: 1.6; }
+        .message-time { font-size: 12px; color: #5f6368; text-align: right; }
+        .record-page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;}
+        .record-page-header input[type="search"] { flex-grow: 1; padding: 12px 14px; border: 1px solid #dadce0; border-radius: 8px; font-size: 14px; background-color: #f1f3f4; }
+        .record-page-header input[type="search"]:focus { background-color: #fff; border-color: #1a73e8; box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2); }
+        .record-group h4 { font-size: 14px; color: #5f6368; padding: 10px 0; margin-top: 12px; border-bottom: 1px solid #e8eaed; font-weight: 500;}
+        .record-list-item { background-color: #fff; padding: 14px 16px; margin-bottom: 10px; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); border: 1px solid transparent; font-size: 14px; cursor: pointer; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+        .record-list-item:hover { border-color: #1a73e8; box-shadow: 0 1px 3px rgba(26,115,232,0.2); }
+        .record-list-item .record-line { margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .record-list-item .record-label { color: #5f6368; flex-basis: 35%; font-size: 13px; }
+        .record-list-item .record-value { color: #202124; font-weight: 400; flex-basis: 65%; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
+        .record-list-item .record-status { font-size: 12px; color: #34a853; text-align: right; margin-top: 6px; font-weight: 500; }
+        .no-records { text-align: center; color: #5f6368; padding: 30px 20px; font-size: 15px; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; padding: 20px; }
+        .modal.active { display: flex; }
+        .modal-content { background-color: #ffffff; margin: auto; padding: 24px; border: none; border-radius: 12px; width: 100%; max-width: 390px; position: relative; max-height: calc(100vh - 40px); display: flex; flex-direction: column; box-shadow: 0 4px 24px rgba(0,0,0,0.15); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #e8eaed; margin-bottom: 20px; }
+        .modal-header h4 { font-size: 18px; color: #202124; font-weight: 500; }
+        .modal-close-btn { color: #5f6368; font-size: 28px; font-weight: normal; cursor: pointer; line-height: 1; font-family: 'Material Icons';}
+        .modal-close-btn:hover { color: #202124; }
+        .modal-body { flex-grow: 1; overflow-y: auto; margin-bottom: 20px; padding-right: 5px; }
+        .modal-body input[type="search"] { padding: 12px 14px; border: 1px solid #dadce0; border-radius: 8px; font-size: 15px; background-color: #f8f9fa; width: 100%; margin-bottom: 15px; }
+        .modal-body input[type="search"]:focus { outline: none; border-color: #1a73e8; box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2); background-color: #fff; }
+        .modal-list-item { padding: 12px 8px; border-bottom: 1px solid #f1f3f4; cursor: default; font-size: 15px; }
+        .modal-list-item:hover { background-color: #f8f9fa; }
+        .modal-list-item:last-child { border-bottom: none; }
+        .modal-footer { text-align: right; padding-top:16px; border-top:1px solid #e8eaed;}
+        .modal-footer .btn { width: auto; padding: 10px 20px; font-size: 14px; margin-left: 12px; }
+        .address-item-details { cursor: pointer; padding: 4px 0; }
+        .address-item-actions { margin-top: 8px; text-align: right; }
+        .address-item-actions button { margin-left: 10px; }
+        .default-tag { font-size: 10px; color: #fff; background-color: #34a853; padding: 2px 6px; border-radius: 4px; margin-left: 5px; vertical-align: middle; font-weight: 500; }
+        .pickup-time-modal-tabs { display: flex; border-bottom: 1px solid #dadce0; margin-bottom: 16px; }
+        .pickup-time-modal-tab { flex: 1; padding: 12px 8px; text-align: center; cursor: pointer; font-weight: 500; color: #5f6368; border-bottom: 3px solid transparent; font-size: 14px; }
+        .pickup-time-modal-tab.active { color: #1a73e8; border-bottom-color: #1a73e8; }
+        .pickup-time-slots-for-day { display: none; }
+        .pickup-time-slots-for-day.active { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
+        .pickup-time-slot { padding: 10px; border: 1px solid #dadce0; border-radius: 8px; cursor: pointer; text-align: center; font-size: 14px; background-color: #fff; transition: background-color 0.2s ease, border-color 0.2s ease; }
+        .pickup-time-slot:hover { background-color: #f1f3f4; border-color: #8ab4f8; }
+        .pickup-time-slot.selected { background-color: #e8f0fe; border-color: #1a73e8; color: #1a73e8; font-weight: 500; }
+        .valuation-options label, .packaging-options label { display: flex; align-items: center; margin-bottom: 10px; font-size: 14px; color: #3c4043; }
+        .valuation-options input[type="radio"], .packaging-options input[type="radio"] { margin-right: 10px; accent-color: #1a73e8; }
+        .valuation-options input[type="number"] { margin-left: 10px; width: 100px; padding: 6px 8px; font-size: 14px; border-radius: 6px; }
+        .record-detail-modal-body .detail-line { display: flex; padding: 10px 0; font-size: 15px; border-bottom: 1px solid #f1f3f4; }
+        .record-detail-modal-body .detail-line:last-child { border-bottom: none; }
+        .record-detail-modal-body .detail-label { color: #5f6368; flex-basis: 35%; font-weight: 500; }
+        .record-detail-modal-body .detail-value { color: #202124; flex-basis: 65%; word-break: break-word; }
+        #toast-modal { align-items: center; background-color: transparent; pointer-events: none; padding-bottom: 30px; }
+        #toast-message { background-color: #323232; color: white; padding: 12px 20px; border-radius: 24px; margin-bottom: 70px; font-size: 14px; pointer-events: all; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+    </style>
 </head>
 <body>
+    <div class="app-container">
+        <div class="page-content">
+            <!--寄件页面 (Page 1)-->
+            <div id="page-send" class="page active">
+                <div class="send-page-tabs">
+                    <button class="send-page-tab active" data-target="send-package-content">寄快递</button>
+                    <button class="send-page-tab" data-target="register-cod-content">登记到付信息</button>
+                </div>
 
-  <h1>📝 待办事项</h1>
+                <div id="send-package-content" class="send-tab-content active">
+                    <div class="form-section">
+                        <h3>寄件人信息</h3>
+                        <div class="form-group"><label for="sender-name">姓名</label><input type="text" id="sender-name"></div>
+                        <div class="form-group"><label for="sender-phone">手机</label><input type="tel" id="sender-phone"></div>
+                        <div class="form-group address-selection-group"><label>所在地区</label><div id="sender-region" class="clickable-field" onclick="openRegionPicker('sender')"><span class="placeholder">请选择省/市/区</span></div></div>
+                        <div class="form-group"><label for="sender-detail-address">详细地址</label><textarea id="sender-detail-address" placeholder="街道、楼牌号等"></textarea></div>
+                        <button class="btn-small" onclick="openAddressBookModal('sender')" style="margin-top:8px;">地址薄</button>
+                    </div>
+                    <hr style="margin: 20px -18px; border: 0; border-top: 1px solid #e8eaed;">
+                     <div class="form-section">
+                        <h3>收件人信息</h3>
+                        <div class="form-group"><label for="receiver-name">姓名</label><input type="text" id="receiver-name" value="李四"></div>
+                        <div class="form-group"><label for="receiver-phone">手机</label><input type="tel" id="receiver-phone" value="13900139000"></div>
+                         <div class="form-group address-selection-group"><label>所在地区</label><div id="receiver-region" class="clickable-field" onclick="openRegionPicker('receiver')"><span class="value">北京市 / 北京城区 / 朝阳区</span></div></div>
+                        <div class="form-group"><label for="receiver-detail-address">详细地址</label><textarea id="receiver-detail-address" placeholder="街道、楼牌号等">建国路88号</textarea></div>
+                        <button class="btn-small" onclick="openAddressBookModal('receiver')" style="margin-top:8px;">地址薄</button>
+                    </div>
 
-  <div class="todo-container">
-    <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
-      <button class="sort-btn" onclick="sortByDate()">按日期排序 ▼</button>
-      <button class="theme-btn" onclick="toggleDarkMode()">🌙 切换深色模式</button>
+                    <div class="form-section">
+                        <h3>寄件人企业信息</h3>
+                        <!-- NEW "所在区域" FIELD ADDED HERE -->
+                        <div class="form-group">
+                            <label>所在区域</label>
+                            <div id="company-location-region" class="clickable-field" onclick="openGenericSelectModal('locationRegion')">
+                                <span class="value">顺德本部</span> <!-- Default Value -->
+                            </div>
+                        </div>
+                        <!-- END NEW FIELD -->
+                        <div class="form-group"><label>单位主体</label><div id="company-entity" class="clickable-field" onclick="openGenericSelectModal('company')"><span class="value">默认科技公司A</span></div></div>
+                        <div class="form-group"><label>所属部门</label><div id="company-department" class="clickable-field" onclick="openGenericSelectModal('department')"><span class="value">研发部</span></div></div>
+                    </div>
+                    <div class="form-section">
+                        <h3>上门取件预约</h3>
+                        <div class="form-group"><label>期望上门时间</label><div id="pickup-time-display" class="clickable-field" onclick="openPickupTimeModal()"><span class="placeholder">请选择上门时间</span></div></div>
+                        <div class="form-group"><label for="product-type">产品类型</label><select id="product-type"></select></div>
+                        <div class="form-group"><label>物品信息</label><div id="item-info-display" class="clickable-field" onclick="openItemInfoModal()"><span class="placeholder">请选择物品信息、保价与包装</span></div></div>
+                        <div class="form-group"><label>付款方式</label><div class="payment-method">寄付月结</div></div>
+                    </div>
+                    <div class="send-package-bottom-bar">
+                        <div class="price-estimate">预估总价：<span id="estimated-price">¥0.00</span></div>
+                        <div class="terms-agreement"><input type="checkbox" id="agree-terms"><label for="agree-terms">阅读并同意<a href="#" onclick="alert('显示条款详情')">《XX服务条款》</a></label></div>
+                        <button id="submit-package-btn" class="btn" onclick="submitPackage()">立即下单</button>
+                    </div>
+                </div>
+
+                <div id="register-cod-content" class="send-tab-content">
+                     <div class="form-section">
+                        <h3>登记到付信息</h3>
+                        <div class="form-group"><label for="cod-tracking-number">运单号码</label><input type="text" id="cod-tracking-number" placeholder="请输入运单号码"></div>
+                        <div class="form-group"><label for="cod-amount">费用 (元)</label><input type="number" id="cod-amount" placeholder="请输入到付金额"></div>
+                        <div class="form-group"><label for="cod-date">到付日期</label><input type="date" id="cod-date"></div>
+                        <div class="form-group"><label for="cod-sender">寄件人</label><input type="text" id="cod-sender" placeholder="请输入寄件人姓名"></div>
+                        <div class="form-group"><label for="cod-receiver">收件人</label><input type="text" id="cod-receiver" placeholder="请输入收件人姓名"></div>
+                        <div class="form-group"><label>单位主体</label><div id="cod-company-entity" class="clickable-field" onclick="openGenericSelectModal('cod-company')"><span class="value">默认科技公司A</span></div></div>
+                        <div class="form-group"><label>所属部门</label><div id="cod-company-department" class="clickable-field" onclick="openGenericSelectModal('cod-department')"><span class="value">研发部</span></div></div>
+                        <button class="btn btn-submit" style="margin-top: 20px;" onclick="submitCodInfo()">提交登记</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-messages" class="page">
+                <div class="message-list-item"><div class="message-content">您在 <span class="highlight-month">3月</span>份有 <span class="highlight-count">2</span> 笔运单未登记，分别为：SF1234567890123 (运单号)、25元 (费用)；SF9876543210987 (运单号)、75元 (费用)；共100元。</div><div class="message-time">2024-04-01 09:30</div></div>
+                <div class="message-list-item"><div class="message-content">【系统通知】顺丰丰密面单功能已升级，保障您的信息安全。</div><div class="message-time">2024-03-28 15:00</div></div>
+            </div>
+
+            <div id="page-records" class="page">
+                <div class="record-tabs">
+                    <button class="record-tab-button active" data-target="sent-records-list" data-record-type="sent">寄件记录</button>
+                    <button class="record-tab-button" data-target="cod-records-list" data-record-type="cod">到付登记记录</button>
+                </div>
+                <div class="record-page-header">
+                     <input type="search" id="record-search-input" placeholder="搜索记录..." oninput="filterRecords()">
+                </div>
+                <div id="sent-records-list" class="record-tab-content active"><div class="no-records">暂无寄件记录</div></div>
+                <div id="cod-records-list" class="record-tab-content"><div class="no-records">暂无到付登记记录</div></div>
+            </div>
+        </div> 
+        <nav class="bottom-nav">
+             <div class="nav-item active" data-page="page-send"><span class="nav-icon">local_shipping</span>寄件</div>
+            <div class="nav-item" data-page="page-messages"><span class="nav-icon">notifications</span>消息</div>
+            <div class="nav-item" data-page="page-records"><span class="nav-icon">history</span>记录</div>
+        </nav>
     </div>
 
-    <form class="todo-form" onsubmit="event.preventDefault(); addTodo();">
-      <input type="text" id="todo-input" placeholder="任务名称" required />
-      <input type="date" id="todo-date" />
-      <select id="todo-category">
-        <option value="">分类</option>
-        <option value="工作">工作</option>
-        <option value="学习">学习</option>
-        <option value="生活">生活</option>
-        <option value="娱乐">娱乐</option>
-      </select>
-      <input type="text" id="todo-note" placeholder="备注（可选）" />
-      <button type="submit" class="add-btn">添加</button>
-    </form>
-
-    <ul id="todo-list"></ul>
-  </div>
-
-  <!-- 编辑弹窗 -->
-  <div id="editModal" class="modal">
-    <div class="modal-content">
-      <h3>编辑任务</h3>
-      <label>任务名称：<input type="text" id="edit-title" /></label>
-      <label>截止日期：<input type="date" id="edit-date" /></label>
-      <label>分类：
-        <select id="edit-category">
-          <option value="">无</option>
-          <option value="工作">工作</option>
-          <option value="学习">学习</option>
-          <option value="生活">生活</option>
-          <option value="娱乐">娱乐</option>
-        </select>
-      </label>
-      <label>备注：<input type="text" id="edit-note" /></label>
-      <div class="modal-buttons">
-        <button onclick="closeEditModal()">取消</button>
-        <button onclick="saveEdit()" style="background:#28a745;color:white;">保存</button>
-      </div>
+    <!-- Modals -->
+    <div id="address-book-modal" class="modal"><div class="modal-content"><div class="modal-header"><h4>选择地址</h4><span class="modal-close-btn" onclick="closeModal('address-book-modal')">close</span></div><div class="modal-body"><input type="search" id="address-search" placeholder="搜索姓名/电话/地址" onkeyup="filterAddressBook()"><div id="address-list" style="margin-bottom:15px;"></div></div><div class="modal-footer" style="justify-content: space-between; display:flex;"><button class="btn btn-secondary" style="background-color: #dadce0; color: #202124;" onclick="openAddEditAddressModal()">新增地址</button></div></div></div>
+    <div id="add-edit-address-modal" class="modal"><div class="modal-content"><div class="modal-header"><h4 id="add-edit-address-modal-title">新增地址</h4><span class="modal-close-btn" onclick="closeModal('add-edit-address-modal')">close</span></div><div class="modal-body">
+        <input type="hidden" id="editing-address-id">
+        <div class="form-group"><label>姓名:</label><input type="text" id="new-addr-name"></div>
+        <div class="form-group"><label>电话:</label><input type="tel" id="new-addr-phone"></div>
+        <div class="form-group address-selection-group">
+            <label>所在地区:</label>
+            <div id="new-addr-region-display" class="clickable-field" onclick="openRegionPicker('new-addr')">
+                <span class="placeholder">请选择省/市/区</span>
+            </div>
+            <input type="hidden" id="new-addr-provinceVal"> <input type="hidden" id="new-addr-cityVal"> <input type="hidden" id="new-addr-districtVal">
+        </div>
+        <div class="form-group"><label>详细地址:</label><textarea id="new-addr-detail" placeholder="街道、楼牌号等"></textarea></div>
+    </div><div class="modal-footer"><button class="btn btn-primary" onclick="saveOrUpdateAddress()">保存</button></div></div></div>
+    
+    <div id="region-picker-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h4>选择地区</h4><span class="modal-close-btn" onclick="closeModal('region-picker-modal')">close</span></div>
+            <div class="modal-body">
+                <div class="form-group"><label for="region-province">省份</label><select id="region-province" onchange="populateCitiesForRegionPicker()"></select></div>
+                <div class="form-group"><label for="region-city">城市</label><select id="region-city" onchange="populateDistrictsForRegionPicker()"></select></div>
+                <div class="form-group"><label for="region-district">区/县</label><select id="region-district"></select></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-primary" onclick="confirmRegionSelection()">确定</button></div>
+        </div>
     </div>
-  </div>
 
-  <script>
-    let currentLi = null;
-    let sortAsc = true;
+    <!-- Re-using company-select-modal for generic selection: LocationRegion, Company, Department -->
+    <div id="company-select-modal" class="modal"><div class="modal-content"><div class="modal-header"><h4 id="company-modal-title">选择</h4><span class="modal-close-btn" onclick="closeModal('company-select-modal')">close</span></div><div class="modal-body"><input type="search" id="company-search" placeholder="搜索..."><div id="company-list-content"></div></div></div></div>
+    
+    <div id="item-info-modal" class="modal"><div class="modal-content"><div class="modal-header"><h4>物品信息、保价与包装</h4><span class="modal-close-btn" onclick="closeModal('item-info-modal')">close</span></div><div class="modal-body"><div class="form-group"><label for="item-type">物品类型</label><select id="item-type"><option value="文件">文件</option><option value="数码产品">数码产品</option><option value="服饰">服饰</option><option value="日用品">日用品</option><option value="其他">其他</option></select></div><div class="form-group"><label for="item-weight">预估总重量 (kg)</label><input type="number" id="item-weight" value="1" min="0.1" step="0.1"></div><div class="form-group"><label for="item-count">件数</label><input type="number" id="item-count" value="1" min="1"></div><hr style="margin: 20px -24px; border:0; border-top:1px solid #e8eaed;"><h5>保价服务</h5><div class="form-group valuation-options"><label><input type="radio" name="valuation" value="none" checked onchange="toggleCustomValuation()">不保价</label><label><input type="radio" name="valuation" value="tier1" onchange="toggleCustomValuation()">保价金额1-500元 (服务费 ¥2)</label><label><input type="radio" name="valuation" value="tier2" onchange="toggleCustomValuation()">保价金额501-1000元 (服务费 ¥3)</label><label><input type="radio" name="valuation" value="custom" onchange="toggleCustomValuation()">自定义保价 <input type="number" id="custom-valuation-amount" placeholder="金额" style="display:none;" oninput="updateCustomValuationFee()"> <span id="custom-valuation-fee-display" style="font-size:12px; margin-left:5px;"></span></label></div><hr style="margin: 20px -24px; border:0; border-top:1px solid #e8eaed;"><h5>包装服务 (可选)</h5><div class="form-group packaging-options"><label for="packaging-service">选择包装</label><select id="packaging-service"></select></div></div><div class="modal-footer"><button class="btn btn-primary" onclick="confirmItemInfo()">确定</button></div></div></div>
+    <div id="pickup-time-modal" class="modal"><div class="modal-content"><div class="modal-header"><h4>选择上门时间</h4><span class="modal-close-btn" onclick="closeModal('pickup-time-modal')">close</span></div><div class="pickup-time-modal-tabs"><div class="pickup-time-modal-tab active" data-day="today">今天</div><div class="pickup-time-modal-tab" data-day="tomorrow">明天</div><div class="pickup-time-modal-tab" data-day="dayAfterTomorrow">后天</div></div><div class="modal-body" id="pickup-time-slots-container-wrapper"><div id="pickup-time-slots-today" class="pickup-time-slots-for-day active"></div><div id="pickup-time-slots-tomorrow" class="pickup-time-slots-for-day"></div><div id="pickup-time-slots-dayAfterTomorrow" class="pickup-time-slots-for-day"></div></div></div></div>
+    <div id="record-detail-modal" class="modal"><div class="modal-content"><div class="modal-header"><h4 id="record-detail-modal-title">记录详情</h4><span class="modal-close-btn" onclick="closeModal('record-detail-modal')">close</span></div><div class="modal-body record-detail-modal-body" id="record-detail-content"></div></div></div>
+    <div id="toast-modal" class="modal" style="align-items: center; background-color: transparent; pointer-events: none; padding-bottom: 30px;"><div id="toast-message" style="background-color: #323232; color: white; padding: 12px 20px; border-radius: 24px; margin-bottom: 70px; font-size: 14px; pointer-events: all; box-shadow: 0 2px 10px rgba(0,0,0,0.2);"></div></div>
 
-    function toggleDarkMode() {
-      document.body.classList.toggle('dark-mode');
-    }
+    <script>
+        // --- MOCK DATA ---
+        const REGION_DATA = { /* ... (Copied from previous version) ... */ };
+        REGION_DATA["北京市"] = { "北京城区": ["东城区", "西城区", "朝阳区", "海淀区", "丰台区", "石景山区"], "北京郊区": ["门头沟区", "房山区", "通州区", "顺义区", "昌平区", "大兴区", "怀柔区", "平谷区", "密云区", "延庆区"] };
+        REGION_DATA["广东省"] = { "深圳市": ["福田区", "罗湖区", "南山区", "盐田区", "宝安区", "龙岗区"], "广州市": ["越秀区", "荔湾区", "海珠区", "天河区"] };
+        REGION_DATA["上海市"] = { "上海城区": ["黄浦区", "徐汇区", "长宁区", "静安区"], "上海郊区": ["浦东新区", "闵行区"] };
 
-    function sortByDate() {
-      const list = document.getElementById('todo-list');
-      const items = Array.from(list.getElementsByTagName('li'));
 
-      items.sort((a, b) => {
-        const dateA = a.querySelector('.todo-meta small')?.textContent.split('截止: ')[1];
-        const dateB = b.querySelector('.todo-meta small')?.textContent.split('截止: ')[1];
+        let MOCK_ADDRESS_BOOK = [
+            { id: 1, name: "张三", phone: "13800138000", province: "广东省", city: "深圳市", district: "南山区", detailAddress: "科技园路1号 腾讯大厦", isDefault: true },
+            { id: 2, name: "李四", phone: "13900139000", province: "北京市", city: "北京城区", district: "朝阳区", detailAddress: "建国路88号 SOHO现代城", isDefault: false },
+        ];
+        let nextAddressId = 3;
 
-        if (!dateA && !dateB) return 0;
-        if (!dateA) return sortAsc ? -1 : 1;
-        if (!dateB) return sortAsc ? 1 : -1;
+        const MOCK_LOCATIONS = [
+            { id: "sd", name: "顺德本部" }, { id: "bj", name: "北京" }, { id: "cd", name: "成都" }, { id: "jm", name: "江门" },
+            { id: "nn", name: "南宁" }, { id: "sz", name: "深圳" }, { id: "wh", name: "武汉" }, { id: "cs", name: "长沙" },
+            { id: "zz", name: "郑州" }, { id: "cq", name: "重庆" }, { id: "zh", name: "珠海" }, { id: "wuhu", name: "芜湖" }
+        ];
+        const MOCK_COMPANIES = [ { id: "comp_a", name: "默认科技公司A" }, { id: "comp_b", name: "创新科技B" }];
+        const MOCK_DEPARTMENTS = { "comp_a": [{ id: "dept_a1", name: "研发部" }, { id: "dept_a2", name: "市场部" }], "comp_b": [{ id: "dept_b1", name: "产品部" }]};
+        const MOCK_PRODUCT_TYPES = [ "顺丰标快", "顺丰特快", "陆运包裹" ];
+        const MOCK_PACKAGING_SERVICES = [ { id: "none", name: "不需要包装服务", cost: 0 }, { id: "F2", name: "防湿损F2", cost: 5 }];
 
-        return sortAsc
-          ? new Date(dateA) - new Date(dateB)
-          : new Date(dateB) - new Date(dateA);
-      });
+        let sentRecords = [];
+        let codRecords = [];
 
-      // 清空后重新添加
-      list.innerHTML = '';
-      items.forEach(li => list.appendChild(li));
+        let currentAddressTarget = null; 
+        let currentSelectedItemInfo = { type: '文件', weight: 1, count: 1, valuationType: 'none', valuationAmount: 0, valuationFee: 0, packagingServiceId: 'none', packagingFee: 0 };
+        let editingAddressId = null; 
+        let currentPickupTimeDay = 'today';
+        let currentRegionPickerTarget = null; 
+        let currentGenericSelectionTarget = null; 
+        let currentGenericSelectionTargetElementId = null;
 
-      sortAsc = !sortAsc;
-    }
 
-    function addTodo() {
-      const titleInput = document.getElementById('todo-input');
-      const dateInput = document.getElementById('todo-date');
-      const categorySelect = document.getElementById('todo-category');
-      const noteInput = document.getElementById('todo-note');
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initNavigation();
+            initSendPageTabs();
+            initRecordPageTabs();
+            initPickupTimeModalTabs();
+            populateProductTypes();
+            populatePackagingServices();
+            setDefaultSenderReceiver();
+            setDefaultPickupTimeDisplay(); 
+            document.getElementById('cod-date').value = new Date().toISOString().split('T')[0];
+            
+            // Set default for the new location field on load
+            const locationRegionValueEl = document.getElementById('company-location-region')?.querySelector('.value');
+            if (locationRegionValueEl && MOCK_LOCATIONS.length > 0) {
+                 locationRegionValueEl.textContent = "顺德本部"; // Explicitly set default
+            }
+            filterRecords(); 
+        });
 
-      const title = titleInput.value.trim();
-      const date = dateInput.value;
-      const category = categorySelect.value;
-      const note = noteInput.value.trim();
+        function setDefaultSenderReceiver() {
+            const defaultSender = MOCK_ADDRESS_BOOK.find(a => a.isDefault);
+            const target = defaultSender || (MOCK_ADDRESS_BOOK.length > 0 ? MOCK_ADDRESS_BOOK[0] : null);
+            if (target) {
+                 document.getElementById('sender-name').value = target.name;
+                 document.getElementById('sender-phone').value = target.phone;
+                 updateRegionDisplay('sender', target.province, target.city, target.district);
+                 document.getElementById('sender-detail-address').value = target.detailAddress;
+            } else {
+                 document.getElementById('sender-name').value = ''; document.getElementById('sender-phone').value = '';
+                 updateRegionDisplay('sender', '', '', ''); 
+                 document.getElementById('sender-detail-address').value = '';
+            }
+            // Example default receiver (can be cleared or have other logic)
+            if (!document.getElementById('receiver-region').querySelector('.value').textContent.includes('/')) { // Check if already set
+                updateRegionDisplay('receiver', '北京市', '北京城区', '朝阳区');
+            }
+        }
+        
+        // --- Generic Selection Modal Logic (for Location, Company, Department) ---
+        function openGenericSelectModal(selectionType) {
+            currentGenericSelectionTarget = selectionType;
+            const modalTitleEl = document.getElementById('company-modal-title');
+            const searchInputEl = document.getElementById('company-search');
+            searchInputEl.value = ''; 
+            searchInputEl.onkeyup = filterGenericList; 
 
-      if (!title) return;
+            let itemsToRender = [];
+            switch (selectionType) {
+                case 'locationRegion':
+                    modalTitleEl.textContent = '选择所在区域'; itemsToRender = MOCK_LOCATIONS;
+                    currentGenericSelectionTargetElementId = 'company-location-region'; break;
+                case 'company':
+                    modalTitleEl.textContent = '选择单位主体'; itemsToRender = MOCK_COMPANIES;
+                    currentGenericSelectionTargetElementId = 'company-entity'; break;
+                case 'department':
+                    modalTitleEl.textContent = '选择所属部门';
+                    const companyName = document.getElementById('company-entity').querySelector('.value').textContent;
+                    const company = MOCK_COMPANIES.find(c => c.name === companyName);
+                    itemsToRender = company ? (MOCK_DEPARTMENTS[company.id] || []) : [];
+                    currentGenericSelectionTargetElementId = 'company-department'; break;
+                case 'cod-company':
+                    modalTitleEl.textContent = '选择单位主体 (到付)'; itemsToRender = MOCK_COMPANIES;
+                    currentGenericSelectionTargetElementId = 'cod-company-entity'; break;
+                case 'cod-department':
+                    modalTitleEl.textContent = '选择所属部门 (到付)';
+                    const codCompName = document.getElementById('cod-company-entity').querySelector('.value').textContent;
+                    const codComp = MOCK_COMPANIES.find(c => c.name === codCompName);
+                    itemsToRender = codComp ? (MOCK_DEPARTMENTS[codComp.id] || []) : [];
+                    currentGenericSelectionTargetElementId = 'cod-company-department'; break;
+                default: console.error("Unknown type:", selectionType); return;
+            }
+            renderGenericList(itemsToRender);
+            openModal('company-select-modal');
+        }
 
-      const li = document.createElement('li');
+        function renderGenericList(items, searchTerm = '') {
+            const listEl = document.getElementById('company-list-content'); listEl.innerHTML = '';
+            const filtered = items.filter(i => i.name.toLowerCase().includes(searchTerm.toLowerCase()));
+            if (filtered.length === 0) { listEl.innerHTML = '<div class="modal-list-item" style="text-align:center; color:#5f6368;">无匹配结果</div>'; return; }
+            filtered.forEach(item => {
+                const div = document.createElement('div'); div.classList.add('modal-list-item');
+                div.textContent = item.name; div.onclick = () => selectGenericItem(item);
+                listEl.appendChild(div);
+            });
+        }
+        
+        function filterGenericList() {
+            const term = document.getElementById('company-search').value;
+            let items = [];
+            switch (currentGenericSelectionTarget) {
+                case 'locationRegion': items = MOCK_LOCATIONS; break;
+                case 'company': case 'cod-company': items = MOCK_COMPANIES; break;
+                case 'department':
+                    const compName = document.getElementById('company-entity').querySelector('.value').textContent;
+                    const comp = MOCK_COMPANIES.find(c=>c.name===compName); items = comp?(MOCK_DEPARTMENTS[comp.id]||[]):[]; break;
+                case 'cod-department':
+                    const codCompN = document.getElementById('cod-company-entity').querySelector('.value').textContent;
+                    const codC = MOCK_COMPANIES.find(c=>c.name===codCompN); items = codC?(MOCK_DEPARTMENTS[codC.id]||[]):[]; break;
+            }
+            renderGenericList(items, term);
+        }
 
-      const mainDiv = document.createElement('div');
-      mainDiv.className = 'todo-main';
+        function selectGenericItem(item) {
+            if (currentGenericSelectionTargetElementId) {
+                 document.getElementById(currentGenericSelectionTargetElementId).querySelector('.value').textContent = item.name;
+                 if (currentGenericSelectionTarget === 'company' || currentGenericSelectionTarget === 'cod-company') {
+                    const deptFieldId = currentGenericSelectionTarget === 'company' ? 'company-department' : 'cod-company-department';
+                    const deptValueEl = document.getElementById(deptFieldId)?.querySelector('.value');
+                    if (deptValueEl) {
+                         const depts = MOCK_DEPARTMENTS[item.id] || [];
+                         deptValueEl.textContent = depts.length > 0 ? depts[0].name : '无可选部门';
+                    }
+                 }
+            }
+            closeModal('company-select-modal'); showToast(`已选择: ${item.name}`);
+        }
 
-      const span = document.createElement('span');
-      span.textContent = title;
+        // --- SUBMIT PACKAGE (Adjusted for new address structure & locationRegion) ---
+        function submitPackage() { 
+            const senderName = document.getElementById('sender-name').value; 
+            const senderPhone = document.getElementById('sender-phone').value;
+            const senderRegionEl = document.getElementById('sender-region');
+            const senderProvince = senderRegionEl.dataset.province; const senderCity = senderRegionEl.dataset.city;
+            const senderDistrict = senderRegionEl.dataset.district;
+            const senderDetailAddress = document.getElementById('sender-detail-address').value;
+            
+            const receiverName = document.getElementById('receiver-name').value; 
+            const receiverPhone = document.getElementById('receiver-phone').value;
+            const receiverRegionEl = document.getElementById('receiver-region');
+            const receiverProvince = receiverRegionEl.dataset.province; const receiverCity = receiverRegionEl.dataset.city;
+            const receiverDistrict = receiverRegionEl.dataset.district;
+            const receiverDetailAddress = document.getElementById('receiver-detail-address').value;
+            
+            const locationRegion = document.getElementById('company-location-region').querySelector('.value').textContent;
+            const companyEntity = document.getElementById('company-entity').querySelector('.value').textContent;
+            const companyDepartment = document.getElementById('company-department').querySelector('.value').textContent;
+            
+            const pickupTimeDisplay = document.getElementById('pickup-time-display'); 
+            const pickupTimeValue = pickupTimeDisplay.dataset.value; 
+            const productType = document.getElementById('product-type').value; 
+            const itemInfoText = document.getElementById('item-info-display').querySelector('.value')?.textContent;
+            const agreeTerms = document.getElementById('agree-terms').checked; 
+            
+            const isPlaceholder = (text) => !text || text.includes("请选择") || text.trim() === "顺德本部" && currentGenericSelectionTargetElementId === 'company-location-region' && document.getElementById('company-location-region').querySelector('.placeholder'); // Special check for default location if it should be explicitly selected
 
-      span.addEventListener('click', () => {
-        li.classList.toggle('completed');
-      });
+            if (!senderName || !senderPhone || !senderProvince || !senderCity || !senderDistrict || !senderDetailAddress ||
+                !receiverName || !receiverPhone || !receiverProvince || !receiverCity || !receiverDistrict || !receiverDetailAddress ||
+                !pickupTimeValue || !productType || !itemInfoText || itemInfoText.includes("请选择") ||
+                isPlaceholder(locationRegion) || isPlaceholder(companyEntity) || isPlaceholder(companyDepartment)
+            ) { 
+                showToast("请填写所有必填项！确保所有选择已完成。"); return; 
+            } 
+            if (!agreeTerms) { showToast("请阅读并同意服务条款！"); return; } 
+            
+            showToast("正在下单..."); 
+            const packageData = { 
+                id: 'SF' + Date.now(), 
+                senderDetails: { name: senderName, phone: senderPhone, province: senderProvince, city: senderCity, district: senderDistrict, detail: senderDetailAddress },
+                receiverDetails: { name: receiverName, phone: receiverPhone, province: receiverProvince, city: receiverCity, district: receiverDistrict, detail: receiverDetailAddress },
+                locationRegion: locationRegion, companyEntity: companyEntity, companyDepartment: companyDepartment,
+                productType: productType, items: itemInfoText, price: document.getElementById('estimated-price').textContent, 
+                pickupTime: pickupTimeDisplay.querySelector('.value').textContent, 
+                submissionTimestamp: new Date().toISOString(), status: '已揽收' 
+            }; 
+            setTimeout(() => { 
+                showToast(`下单成功！运单号：${packageData.id}`); 
+                sentRecords.unshift(packageData); filterRecords(); 
+                document.getElementById('item-info-display').innerHTML = `<span class="placeholder">请选择物品信息、保价与包装</span>`; 
+                currentSelectedItemInfo = { type: '文件', weight: 1, count: 1, valuationType: 'none', valuationAmount: 0, valuationFee: 0, packagingServiceId: 'none', packagingFee: 0 }; 
+                calculateAndUpdatePrice(); document.getElementById('agree-terms').checked = false; 
+                setDefaultPickupTimeDisplay(); 
+                const pickupTimeEl = document.getElementById('pickup-time-display'); if(pickupTimeEl) pickupTimeEl.dataset.value = '';
+                document.getElementById('product-type').value = "顺丰标快"; 
+            }, 1500); 
+        }
+        
+        // --- All other JS functions (copied from previous final for completeness) ---
+        populateProductTypes = function() { const select = document.getElementById('product-type'); select.innerHTML = ''; MOCK_PRODUCT_TYPES.forEach(type => { const option = document.createElement('option'); option.value = type; option.textContent = type; if (type === "顺丰标快") option.selected = true; select.appendChild(option); }); }
+        setDefaultPickupTimeDisplay = function() { document.getElementById('pickup-time-display').innerHTML = `<span class="placeholder">请选择上门时间</span>`; }
+        populatePackagingServices = function() { const select = document.getElementById('packaging-service'); select.innerHTML = ''; MOCK_PACKAGING_SERVICES.forEach(service => { const option = document.createElement('option'); option.value = service.id; option.textContent = `${service.name} (+¥${service.cost})`; select.appendChild(option); }); }
+        initNavigation = function() { const navItems = document.querySelectorAll('.bottom-nav .nav-item'); navItems.forEach(item => { item.addEventListener('click', () => { navItems.forEach(i => i.classList.remove('active')); document.querySelectorAll('.app-container .page').forEach(p => p.classList.remove('active')); item.classList.add('active'); const pageId = item.getAttribute('data-page'); document.getElementById(pageId).classList.add('active'); if(pageId === 'page-records') { document.getElementById('record-search-input').value = ''; filterRecords(); } }); }); }
+        initSendPageTabs = function() { const tabButtons = document.querySelectorAll('#page-send .send-page-tab'); const tabContents = document.querySelectorAll('#page-send .send-tab-content'); tabButtons.forEach(button => { button.addEventListener('click', () => { tabButtons.forEach(btn => btn.classList.remove('active')); tabContents.forEach(content => content.classList.remove('active')); button.classList.add('active'); const targetId = button.getAttribute('data-target'); document.getElementById(targetId).classList.add('active'); }); }); }
+        initRecordPageTabs = function() { const tabButtons = document.querySelectorAll('#page-records .record-tab-button'); const tabContents = document.querySelectorAll('#page-records .record-tab-content'); tabButtons.forEach(button => { button.addEventListener('click', () => { tabButtons.forEach(btn => btn.classList.remove('active')); tabContents.forEach(content => content.classList.remove('active')); button.classList.add('active'); const targetContentId = button.getAttribute('data-target'); document.getElementById(targetContentId).classList.add('active'); document.getElementById('record-search-input').value = ''; filterRecords(); }); }); }
+        filterRecords = function() { const searchTerm = document.getElementById('record-search-input').value.toLowerCase(); const activeTabButton = document.querySelector('#page-records .record-tab-button.active'); if (!activeTabButton) { console.warn("No active record tab found"); return; } const recordType = activeTabButton.dataset.recordType; const listElementId = activeTabButton.dataset.target; if (recordType === 'sent') { renderGroupedRecords(sentRecords, listElementId, 'sent', searchTerm); } else if (recordType === 'cod') { renderGroupedRecords(codRecords, listElementId, 'cod', searchTerm); } }
+        openModal = function(modalId) { document.getElementById(modalId).classList.add('active'); }
+        closeModal = function(modalId) { document.getElementById(modalId).classList.remove('active'); }
+        showToast = function(message) { const toast = document.getElementById('toast-modal'); const msg = document.getElementById('toast-message'); msg.textContent = message; toast.classList.add('active'); setTimeout(() => toast.classList.remove('active'), 2500); }
+        openRegionPicker = function(targetPrefix) { currentRegionPickerTarget = targetPrefix; const provinceSelect = document.getElementById('region-province'); provinceSelect.innerHTML = '<option value="">请选择省份</option>'; Object.keys(REGION_DATA).forEach(province => { const option = document.createElement('option'); option.value = province; option.textContent = province; provinceSelect.appendChild(option); }); document.getElementById('region-city').innerHTML = '<option value="">请选择城市</option>'; document.getElementById('region-district').innerHTML = '<option value="">请选择区/县</option>'; openModal('region-picker-modal'); }
+        populateCitiesForRegionPicker = function() { const province = document.getElementById('region-province').value; const citySelect = document.getElementById('region-city'); citySelect.innerHTML = '<option value="">请选择城市</option>'; document.getElementById('region-district').innerHTML = '<option value="">请选择区/县</option>'; if (province && REGION_DATA[province]) { Object.keys(REGION_DATA[province]).forEach(city => { const option = document.createElement('option'); option.value = city; option.textContent = city; citySelect.appendChild(option); }); } }
+        populateDistrictsForRegionPicker = function() { const province = document.getElementById('region-province').value; const city = document.getElementById('region-city').value; const districtSelect = document.getElementById('region-district'); districtSelect.innerHTML = '<option value="">请选择区/县</option>'; if (province && city && REGION_DATA[province] && REGION_DATA[province][city]) { REGION_DATA[province][city].forEach(district => { const option = document.createElement('option'); option.value = district; option.textContent = district; districtSelect.appendChild(option); }); } }
+        confirmRegionSelection = function() { const province = document.getElementById('region-province').value; const city = document.getElementById('region-city').value; const district = document.getElementById('region-district').value; if (!province || !city || !district) { showToast("请选择完整的省市区信息。"); return; } updateRegionDisplay(currentRegionPickerTarget, province, city, district); closeModal('region-picker-modal'); }
+        updateRegionDisplay = function(targetPrefix, province, city, district) { const displayElement = document.getElementById(`${targetPrefix}-region`); const displayElementModal = document.getElementById(`${targetPrefix}-region-display`); const displayText = (province && city && district) ? `${province} / ${city} / ${district}` : '<span class="placeholder">请选择省/市/区</span>'; if (displayElement) { if (province && city && district) { displayElement.innerHTML = `<span class="value">${displayText}</span>`; } else { displayElement.innerHTML = displayText; } displayElement.dataset.province = province; displayElement.dataset.city = city; displayElement.dataset.district = district; } if (displayElementModal) { if (province && city && district) { displayElementModal.innerHTML = `<span class="value">${displayText}</span>`; } else { displayElementModal.innerHTML = displayText; } document.getElementById('new-addr-provinceVal').value = province; document.getElementById('new-addr-cityVal').value = city; document.getElementById('new-addr-districtVal').value = district;} } // Corrected hidden input IDs
+        openAddressBookModal = function(target) { currentAddressTarget = target; renderAddressBook(); document.getElementById('address-search').value = ''; openModal('address-book-modal');}
+        renderAddressBook = function(searchTerm = '') {const listElement = document.getElementById('address-list'); listElement.innerHTML = ''; const filteredAddresses = MOCK_ADDRESS_BOOK.filter(addr => addr.name.toLowerCase().includes(searchTerm.toLowerCase()) || addr.phone.includes(searchTerm) || (addr.province + addr.city + addr.district + addr.detailAddress).toLowerCase().includes(searchTerm.toLowerCase())).sort((a,b) => b.isDefault - a.isDefault || a.name.localeCompare(b.name, 'zh-CN')); if (filteredAddresses.length === 0) { listElement.innerHTML = '<div class="modal-list-item" style="text-align:center; color:#5f6368; padding: 20px 0;">无匹配结果或地址薄为空</div>'; return; } filteredAddresses.forEach(addr => {const item = document.createElement('div'); item.classList.add('modal-list-item'); let defaultTag = addr.isDefault ? '<span class="default-tag">默认</span>' : ''; const fullAddr = `${addr.province || ''} ${addr.city || ''} ${addr.district || ''} ${addr.detailAddress || ''}`; item.innerHTML = `<div class="address-item-details" onclick="selectAddress(${addr.id})"><strong>${addr.name}</strong>${defaultTag} <span style="color:#5f6368; font-size:14px;">(${addr.phone})</span><br><small style="color:#5f6368; display:block; margin-top:2px;">${fullAddr.trim()}</small></div><div class="address-item-actions">${!addr.isDefault ? `<button class="btn-link" onclick="setAsDefaultAddress(${addr.id})">设为默认</button>` : ''}<button class="btn-link" onclick="openAddEditAddressModal(${addr.id})">修改</button><button class="btn-link" style="color:#d93025;" onclick="deleteAddress(${addr.id})">删除</button></div>`; listElement.appendChild(item); });}
+        filterAddressBook = function() { renderAddressBook(document.getElementById('address-search').value); }
+        selectAddress = function(addressId) { const addr = MOCK_ADDRESS_BOOK.find(a => a.id === addressId); if (!addr) return; const targetPrefix = currentAddressTarget; document.getElementById(`${targetPrefix}-name`).value = addr.name; document.getElementById(`${targetPrefix}-phone`).value = addr.phone; updateRegionDisplay(targetPrefix, addr.province, addr.city, addr.district); document.getElementById(`${targetPrefix}-detail-address`).value = addr.detailAddress; closeModal('address-book-modal'); showToast(`已选择地址: ${addr.name}`);}
+        openAddEditAddressModal = function(addressIdToEdit = null) { editingAddressId = addressIdToEdit; const modalTitle = document.getElementById('add-edit-address-modal-title'); const nameInput = document.getElementById('new-addr-name'); const phoneInput = document.getElementById('new-addr-phone'); const detailAddressInput = document.getElementById('new-addr-detail'); document.getElementById('editing-address-id').value = addressIdToEdit || ''; if (addressIdToEdit) { const addr = MOCK_ADDRESS_BOOK.find(a => a.id === addressIdToEdit); if (addr) { modalTitle.textContent = '修改地址'; nameInput.value = addr.name; phoneInput.value = addr.phone; updateRegionDisplay('new-addr', addr.province, addr.city, addr.district); detailAddressInput.value = addr.detailAddress; } } else { modalTitle.textContent = '新增地址'; nameInput.value = ''; phoneInput.value = ''; updateRegionDisplay('new-addr', '', '', ''); detailAddressInput.value = ''; } openModal('add-edit-address-modal');}
+        saveOrUpdateAddress = function() { const id = document.getElementById('editing-address-id').value ? parseInt(document.getElementById('editing-address-id').value) : null; const name = document.getElementById('new-addr-name').value.trim(); const phone = document.getElementById('new-addr-phone').value.trim(); const province = document.getElementById('new-addr-provinceVal').value; const city = document.getElementById('new-addr-cityVal').value; const district = document.getElementById('new-addr-districtVal').value; const detailAddress = document.getElementById('new-addr-detail').value.trim(); if (!name || !phone || !province || !city || !district || !detailAddress) { showToast("请填写所有必填的地址信息。"); return; } if (!/^\d{11}$/.test(phone) && !/^\d{3,4}-\d{7,8}$/.test(phone) && !/^\d{7,8}$/.test(phone)) { showToast("请输入有效的手机或固话号码。"); return; } const addressData = { name, phone, province, city, district, detailAddress }; if (id) { const addrIndex = MOCK_ADDRESS_BOOK.findIndex(a => a.id === id); if (addrIndex > -1) { MOCK_ADDRESS_BOOK[addrIndex] = { ...MOCK_ADDRESS_BOOK[addrIndex], ...addressData }; showToast("地址已更新！"); } } else { const newAddr = { id: nextAddressId++, ...addressData, isDefault: MOCK_ADDRESS_BOOK.length === 0 }; MOCK_ADDRESS_BOOK.push(newAddr); showToast("新地址已保存！"); } renderAddressBook(); closeModal('add-edit-address-modal'); editingAddressId = null; document.getElementById('editing-address-id').value = ''; setDefaultSenderReceiver(); }
+        setAsDefaultAddress = function(addressId) { MOCK_ADDRESS_BOOK.forEach(addr => addr.isDefault = (addr.id === addressId)); renderAddressBook(); showToast("默认地址已更新。"); setDefaultSenderReceiver(); }
+        deleteAddress = function(addressId) { if (confirm("确定要删除此地址吗？")) { const addrIndex = MOCK_ADDRESS_BOOK.findIndex(a => a.id === addressId); if (addrIndex > -1) { const deletedAddr = MOCK_ADDRESS_BOOK.splice(addrIndex, 1)[0]; if (deletedAddr.isDefault && MOCK_ADDRESS_BOOK.length > 0) { MOCK_ADDRESS_BOOK[0].isDefault = true; } else if (MOCK_ADDRESS_BOOK.length === 0) { setDefaultSenderReceiver(); } renderAddressBook(); showToast("地址已删除。"); setDefaultSenderReceiver(); } } }
+        initPickupTimeModalTabs = function() { const tabs = document.querySelectorAll('.pickup-time-modal-tab'); tabs.forEach(tab => { tab.addEventListener('click', () => { tabs.forEach(t => t.classList.remove('active')); tab.classList.add('active'); currentPickupTimeDay = tab.dataset.day; document.querySelectorAll('.pickup-time-slots-for-day').forEach(c => c.classList.remove('active')); document.getElementById(`pickup-time-slots-${currentPickupTimeDay}`).classList.add('active'); renderPickupTimeSlots(currentPickupTimeDay); }); }); }
+        openPickupTimeModal = function() { currentPickupTimeDay = 'today'; document.querySelectorAll('.pickup-time-modal-tab').forEach(tab => { tab.classList.toggle('active', tab.dataset.day === 'today'); }); document.querySelectorAll('.pickup-time-slots-for-day').forEach(container => { container.classList.toggle('active', container.id === 'pickup-time-slots-today'); container.innerHTML = ''; }); renderPickupTimeSlots('today'); openModal('pickup-time-modal'); }
+        renderPickupTimeSlots = function(dayKey) { const containerId = `pickup-time-slots-${dayKey}`; const container = document.getElementById(containerId); if (!container) return; container.innerHTML = ''; const baseDate = new Date(); if (dayKey === 'tomorrow') baseDate.setDate(baseDate.getDate() + 1); else if (dayKey === 'dayAfterTomorrow') baseDate.setDate(baseDate.getDate() + 2); let startHour = 8; if (dayKey === 'today') { startHour = Math.max(8, new Date().getHours() + 1); } for (let h = startHour; h <= 21; h++) { if (dayKey === 'today' && h <= new Date().getHours() && h < 8) continue; const slotStartStr = `${String(h).padStart(2, '0')}:00`; const slotEndStr = `${String(h + 1).padStart(2, '0')}:00`; const dateLabel = dayKey === 'today' ? '今天' : (dayKey === 'tomorrow' ? '明天' : '后天'); const slotDateTimeValue = `${baseDate.getFullYear()}-${String(baseDate.getMonth() + 1).padStart(2, '0')}-${String(baseDate.getDate()).padStart(2, '0')} ${slotStartStr}-${slotEndStr}`; const slotDisplay = `${slotStartStr} - ${slotEndStr}`; const slotDiv = document.createElement('div'); slotDiv.classList.add('pickup-time-slot'); slotDiv.textContent = slotDisplay; slotDiv.onclick = () => selectPickupTime(slotDateTimeValue, `${dateLabel} ${slotDisplay}`); container.appendChild(slotDiv); } if (container.innerHTML === '') { container.innerHTML = '<div class="no-records" style="padding:20px 0; grid-column: 1 / -1;">今日已无可预约时间</div>'; } }
+        selectPickupTime = function(dateTimeValue, displayValue) { const displayElement = document.getElementById('pickup-time-display'); displayElement.innerHTML = `<span class="value">${displayValue}</span>`; displayElement.dataset.value = dateTimeValue; closeModal('pickup-time-modal'); showToast(`已选择上门时间: ${displayValue}`); }
+        openItemInfoModal = function() { document.getElementById('item-type').value = currentSelectedItemInfo.type; document.getElementById('item-weight').value = currentSelectedItemInfo.weight; document.getElementById('item-count').value = currentSelectedItemInfo.count; document.querySelectorAll('input[name="valuation"]').forEach(radio => { radio.checked = (radio.value === currentSelectedItemInfo.valuationType); }); document.getElementById('custom-valuation-amount').value = currentSelectedItemInfo.valuationAmount > 0 ? currentSelectedItemInfo.valuationAmount : ''; toggleCustomValuation(); document.getElementById('packaging-service').value = currentSelectedItemInfo.packagingServiceId; openModal('item-info-modal');}
+        toggleCustomValuation = function() { const customAmountInput = document.getElementById('custom-valuation-amount'); const customFeeDisplay = document.getElementById('custom-valuation-fee-display'); if (document.querySelector('input[name="valuation"][value="custom"]').checked) { customAmountInput.style.display = 'inline-block'; updateCustomValuationFee(); } else { customAmountInput.style.display = 'none'; customFeeDisplay.textContent = ''; }}
+        updateCustomValuationFee = function() { const amount = parseFloat(document.getElementById('custom-valuation-amount').value); const feeDisplay = document.getElementById('custom-valuation-fee-display'); if (amount > 0) { let fee = Math.max(1, Math.min(20, amount * 0.01)); feeDisplay.textContent = `(服务费 ¥${fee.toFixed(2)})`; } else { feeDisplay.textContent = ''; }}
+        confirmItemInfo = function() { currentSelectedItemInfo.type = document.getElementById('item-type').value; currentSelectedItemInfo.weight = parseFloat(document.getElementById('item-weight').value) || 1; currentSelectedItemInfo.count = parseInt(document.getElementById('item-count').value) || 1; const selectedValuationRadio = document.querySelector('input[name="valuation"]:checked'); currentSelectedItemInfo.valuationType = selectedValuationRadio.value; currentSelectedItemInfo.valuationAmount = 0; currentSelectedItemInfo.valuationFee = 0; if (currentSelectedItemInfo.valuationType === 'tier1') { currentSelectedItemInfo.valuationFee = 2; } else if (currentSelectedItemInfo.valuationType === 'tier2') { currentSelectedItemInfo.valuationFee = 3; } else if (currentSelectedItemInfo.valuationType === 'custom') { currentSelectedItemInfo.valuationAmount = parseFloat(document.getElementById('custom-valuation-amount').value) || 0; if (currentSelectedItemInfo.valuationAmount > 0) { currentSelectedItemInfo.valuationFee = Math.max(1, Math.min(20, currentSelectedItemInfo.valuationAmount * 0.01)); } else { currentSelectedItemInfo.valuationType = 'none';}} currentSelectedItemInfo.packagingServiceId = document.getElementById('packaging-service').value; const selectedPackaging = MOCK_PACKAGING_SERVICES.find(s => s.id === currentSelectedItemInfo.packagingServiceId); currentSelectedItemInfo.packagingFee = selectedPackaging ? selectedPackaging.cost : 0; let displayString = `${currentSelectedItemInfo.type}，${currentSelectedItemInfo.weight}kg，${currentSelectedItemInfo.count}件`; if (currentSelectedItemInfo.valuationType !== 'none') { let valText = ''; if (currentSelectedItemInfo.valuationType === 'tier1') valText = '保价(≤500)'; else if (currentSelectedItemInfo.valuationType === 'tier2') valText = '保价(≤1000)'; else if (currentSelectedItemInfo.valuationType === 'custom' && currentSelectedItemInfo.valuationAmount > 0) valText = `保价(¥${currentSelectedItemInfo.valuationAmount})`; if (valText) displayString += `，${valText}`; } if (selectedPackaging && selectedPackaging.id !== 'none') { displayString += `，${selectedPackaging.name.split(' ')[0]}`; } const displayElement = document.getElementById('item-info-display'); displayElement.innerHTML = `<span class="value">${displayString}</span>`; calculateAndUpdatePrice(); closeModal('item-info-modal'); showToast("物品信息已更新");}
+        calculateAndUpdatePrice = function() { const basePrice = 12; const weightCharge = Math.max(0, (currentSelectedItemInfo.weight - 1) * 2); let totalItemsCost = (basePrice + weightCharge) * currentSelectedItemInfo.count; let estimatedPrice = totalItemsCost + currentSelectedItemInfo.valuationFee + currentSelectedItemInfo.packagingFee; document.getElementById('estimated-price').textContent = `¥${estimatedPrice.toFixed(2)}`;}
+        submitCodInfo = function() { const trackingNumber = document.getElementById('cod-tracking-number').value.trim(); const amount = document.getElementById('cod-amount').value; const date = document.getElementById('cod-date').value; const sender = document.getElementById('cod-sender').value.trim(); const receiver = document.getElementById('cod-receiver').value.trim(); const company = document.getElementById('cod-company-entity').querySelector('.value').textContent; const department = document.getElementById('cod-company-department').querySelector('.value').textContent; if (!trackingNumber || !amount || !date || !sender || !receiver ) { showToast("请填写所有必填项！"); return; } if (parseFloat(amount) <= 0) { showToast("金额必须大于0！"); return; } if (!/^[a-zA-Z0-9]+$/.test(trackingNumber)) { showToast("运单号格式不正确 (仅限字母和数字)。"); return; } showToast("正在提交登记..."); const codData = { id: trackingNumber.toUpperCase(), amount: `¥${parseFloat(amount).toFixed(2)}`, date: date, sender: sender, receiver: receiver, company: company, department: department, registrationTimestamp: new Date().toISOString() }; setTimeout(() => { showToast(`到付信息登记成功: ${codData.id}`); codRecords.unshift(codData); filterRecords(); document.getElementById('cod-tracking-number').value = ''; document.getElementById('cod-amount').value = ''; document.getElementById('cod-sender').value = ''; document.getElementById('cod-receiver').value = '';}, 1500); }
+        getRelativeDateGroup = function(isoTimestampString) {const recordDate = new Date(isoTimestampString); const today = new Date(); const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1); today.setHours(0,0,0,0); yesterday.setHours(0,0,0,0); recordDate.setHours(0,0,0,0); if (recordDate.getTime() === today.getTime()) return "今天"; if (recordDate.getTime() === yesterday.getTime()) return "昨天"; return recordDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' });}
+        renderGroupedRecords = function(allRecords, listElementId, type, searchTerm = '') { const listElement = document.getElementById(listElementId); let recordsToDisplay = allRecords; if (searchTerm) { recordsToDisplay = allRecords.filter(record => { return Object.values(record).some(value => String(value).toLowerCase().includes(searchTerm) || (record.senderDetails && Object.values(record.senderDetails).some(sdVal => String(sdVal).toLowerCase().includes(searchTerm))) || (record.receiverDetails && Object.values(record.receiverDetails).some(rdVal => String(rdVal).toLowerCase().includes(searchTerm))) ); }); } listElement.innerHTML = ''; if (recordsToDisplay.length === 0) { listElement.innerHTML = `<div class="no-records">${searchTerm ? '无匹配搜索结果' : `暂无${type === 'sent' ? '寄件' : '到付登记'}记录`}</div>`; return; } recordsToDisplay.sort((a, b) => new Date(b.submissionTimestamp || b.registrationTimestamp) - new Date(a.submissionTimestamp || a.registrationTimestamp)); const groupedRecords = {}; recordsToDisplay.forEach(record => { const groupKey = getRelativeDateGroup(record.submissionTimestamp || record.registrationTimestamp); if (!groupedRecords[groupKey]) { groupedRecords[groupKey] = []; } groupedRecords[groupKey].push(record); }); const groupOrder = ["今天", "昨天"]; const sortedGroupKeys = Object.keys(groupedRecords).sort((a, b) => { const indexA = groupOrder.indexOf(a); const indexB = groupOrder.indexOf(b); if (indexA !== -1 && indexB !== -1) return indexA - indexB; if (indexA !== -1) return -1; if (indexB !== -1) return 1; const dateAFromGroup = groupedRecords[a][0]; const dateBFromGroup = groupedRecords[b][0]; if (dateAFromGroup && dateBFromGroup) { return new Date(dateBFromGroup.submissionTimestamp || dateBFromGroup.registrationTimestamp) - new Date(dateAFromGroup.submissionTimestamp || dateAFromGroup.registrationTimestamp); } return 0; }); sortedGroupKeys.forEach(groupKey => { const groupHeader = document.createElement('div'); groupHeader.classList.add('record-group'); groupHeader.innerHTML = `<h4>${groupKey}</h4>`; listElement.appendChild(groupHeader); groupedRecords[groupKey].forEach(record => { const item = document.createElement('div'); item.classList.add('record-list-item'); item.dataset.recordId = record.id; item.dataset.recordType = type; if (type === 'sent') { item.innerHTML = `<div class="record-line"><span class="record-label">运单号:</span><span class="record-value">${record.id}</span></div><div class="record-line"><span class="record-label">产品:</span><span class="record-value">${record.productType || 'N/A'}</span></div><div class="record-line"><span class="record-label">收件人:</span><span class="record-value">${record.receiverDetails ? record.receiverDetails.name : (record.receiver || "").split('(')[0].trim()}</span></div><div class="record-status">${record.status} - ${new Date(record.submissionTimestamp).toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'})}</div>`; } else { item.innerHTML = `<div class="record-line"><span class="record-label">运单号:</span><span class="record-value">${record.id}</span></div><div class="record-line"><span class="record-label">收件人:</span><span class="record-value">${record.receiver}</span></div><div class="record-line"><span class="record-label">金额:</span><span class="record-value">${record.amount}</span></div><div class="record-status">登记于 ${new Date(record.registrationTimestamp).toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'})}</div>`; } item.onclick = () => showRecordDetail(record.id, type); listElement.appendChild(item); }); });}
+        showRecordDetail = function(recordId, recordType) { let record; if (recordType === 'sent') { record = sentRecords.find(r => r.id === recordId); } else { record = codRecords.find(r => r.id === recordId); } if (!record) { showToast("记录未找到！"); return; } const detailContent = document.getElementById('record-detail-content'); detailContent.innerHTML = ''; let detailsHtml = ''; if (recordType === 'sent') { document.getElementById('record-detail-modal-title').textContent = '寄件记录详情'; const senderAddr = record.senderDetails ? `${record.senderDetails.province || ''} ${record.senderDetails.city || ''} ${record.senderDetails.district || ''} ${record.senderDetails.detail || ''}`.trim() : 'N/A'; const receiverAddr = record.receiverDetails ? `${record.receiverDetails.province || ''} ${record.receiverDetails.city || ''} ${record.receiverDetails.district || ''} ${record.receiverDetails.detail || ''}`.trim() : 'N/A'; detailsHtml = `<div class="detail-line"><span class="detail-label">运单号:</span><span class="detail-value">${record.id}</span></div><div class="detail-line"><span class="detail-label">寄件人:</span><span class="detail-value">${record.senderDetails ? record.senderDetails.name : 'N/A'} (${record.senderDetails ? record.senderDetails.phone : 'N/A' })</span></div><div class="detail-line"><span class="detail-label">寄件地址:</span><span class="detail-value">${senderAddr}</span></div><div class="detail-line"><span class="detail-label">所在区域:</span><span class="detail-value">${record.locationRegion || '-'}</span></div><div class="detail-line"><span class="detail-label">单位主体:</span><span class="detail-value">${record.companyEntity || '-'}</span></div><div class="detail-line"><span class="detail-label">所属部门:</span><span class="detail-value">${record.companyDepartment || '-'}</span></div><div class="detail-line"><span class="detail-label">收件人:</span><span class="detail-value">${record.receiverDetails ? record.receiverDetails.name : 'N/A'} (${record.receiverDetails ? record.receiverDetails.phone : 'N/A' })</span></div><div class="detail-line"><span class="detail-label">收件地址:</span><span class="detail-value">${receiverAddr}</span></div><div class="detail-line"><span class="detail-label">产品类型:</span><span class="detail-value">${record.productType}</span></div><div class="detail-line"><span class="detail-label">物品信息:</span><span class="detail-value">${record.items}</span></div><div class="detail-line"><span class="detail-label">预估总价:</span><span class="detail-value">${record.price}</span></div><div class="detail-line"><span class="detail-label">上门时间:</span><span class="detail-value">${record.pickupTime}</span></div><div class="detail-line"><span class="detail-label">下单时间:</span><span class="detail-value">${new Date(record.submissionTimestamp).toLocaleString('zh-CN', { year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' })}</span></div><div class="detail-line"><span class="detail-label">状态:</span><span class="detail-value">${record.status}</span></div>`; } else { document.getElementById('record-detail-modal-title').textContent = '到付登记详情'; detailsHtml = `<div class="detail-line"><span class="detail-label">运单号码:</span><span class="detail-value">${record.id}</span></div><div class="detail-line"><span class="detail-label">费用:</span><span class="detail-value">${record.amount}</span></div><div class="detail-line"><span class="detail-label">到付日期:</span><span class="detail-value">${new Date(record.date).toLocaleDateString('zh-CN')}</span></div><div class="detail-line"><span class="detail-label">寄件人:</span><span class="detail-value">${record.sender}</span></div><div class="detail-line"><span class="detail-label">收件人:</span><span class="detail-value">${record.receiver}</span></div><div class="detail-line"><span class="detail-label">单位主体:</span><span class="detail-value">${record.company}</span></div><div class="detail-line"><span class="detail-label">所属部门:</span><span class="detail-value">${record.department}</span></div><div class="detail-line"><span class="detail-label">登记时间:</span><span class="detail-value">${new Date(record.registrationTimestamp).toLocaleString('zh-CN', { year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' })}</span></div>`; } detailContent.innerHTML = detailsHtml; openModal('record-detail-modal'); }
 
-      const metaDiv = document.createElement('div');
-      metaDiv.className = 'todo-meta';
-      if (category) metaDiv.innerHTML += `<small>🏷️ 分类: ${category}</small><br>`;
-      if (date) metaDiv.innerHTML += `<small>📅 截止: ${date}</small><br>`;
-      if (note) metaDiv.innerHTML += `<small>📌 备注: ${note}</small>`;
-
-      mainDiv.appendChild(span);
-      mainDiv.appendChild(metaDiv);
-
-      const actionDiv = document.createElement('div');
-      actionDiv.className = 'todo-actions';
-
-      const editBtn = document.createElement('button');
-      editBtn.innerHTML = '<i class="fas fa-edit"></i>';
-      editBtn.title = '编辑';
-      editBtn.onclick = () => openEditModal(li, title, date, category, note);
-
-      const deleteBtn = document.createElement('button');
-      deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
-      deleteBtn.title = '删除';
-      deleteBtn.onclick = () => li.remove();
-
-      actionDiv.appendChild(editBtn);
-      actionDiv.appendChild(deleteBtn);
-
-      li.appendChild(mainDiv);
-      li.appendChild(actionDiv);
-
-      document.getElementById('todo-list').appendChild(li);
-
-      titleInput.value = '';
-      dateInput.value = '';
-      categorySelect.selectedIndex = 0;
-      noteInput.value = '';
-    }
-
-    function openEditModal(li, title, date, category, note) {
-      currentLi = li;
-      document.getElementById('edit-title').value = title;
-      document.getElementById('edit-date').value = date || '';
-      document.getElementById('edit-category').value = category || '';
-      document.getElementById('edit-note').value = note || '';
-      document.getElementById('editModal').style.display = 'flex';
-    }
-
-    function closeEditModal() {
-      document.getElementById('editModal').style.display = 'none';
-    }
-
-    function saveEdit() {
-      const newTitle = document.getElementById('edit-title').value.trim();
-      const newDate = document.getElementById('edit-date').value;
-      const newCategory = document.getElementById('edit-category').value;
-      const newNote = document.getElementById('edit-note').value.trim();
-
-      if (!newTitle) return;
-
-      const mainDiv = currentLi.querySelector('.todo-main');
-      const span = mainDiv.querySelector('span');
-      const metaDiv = mainDiv.querySelector('.todo-meta');
-
-      span.textContent = newTitle;
-
-      metaDiv.innerHTML = '';
-      if (newCategory) metaDiv.innerHTML += `<small>🏷️ 分类: ${newCategory}</small><br>`;
-      if (newDate) metaDiv.innerHTML += `<small>📅 截止: ${newDate}</small><br>`;
-      if (newNote) metaDiv.innerHTML += `<small>📌 备注: ${newNote}</small>`;
-
-      closeEditModal();
-    }
-
-    document.getElementById('todo-input').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        addTodo();
-      }
-    });
-  </script>
-
+    </script>
 </body>
 </html>
