@@ -352,6 +352,7 @@
             return value !== '' && !value.includes("请选择") && value !== "无可选部门";
         }
 
+
         function submitPackage() { 
             const senderName = document.getElementById('sender-name').value.trim(); 
             const senderPhone = document.getElementById('sender-phone').value.trim();
@@ -408,9 +409,10 @@
                 actualPaidAmount: estimatedPriceVal, // Will be updated on payment if different
                 pickupTime: pickupTimeDisplay.querySelector('.value').textContent, 
                 submissionTimestamp: submissionTime, 
+                orderUser: "李思思", // ADDED - Mocked user
                 status: '待揽件', 
                 paymentStatus: '待支付',
-                pickupTimestamp: null, // Initially no pickup time
+                pickupTimestamp: null, 
                 paymentTimestamp: null 
             }; 
             setTimeout(() => { 
@@ -455,7 +457,9 @@
                 type: 'cod', id: trackingNumber.toUpperCase(), amount: `¥${parseFloat(amount).toFixed(2)}`, date: date, 
                 sender: sender, receiver: receiver, locationRegion: locationRegionCod, company: company, 
                 department: department, registrationTimestamp: registrationTime,
-                registrationMethod: '人工登记', paymentStatus: '已支付', 
+                registrationMethod: '人工登记', 
+                registeredByUser: '李思思', // ADDED - Mocked user for manual registration
+                paymentStatus: '已支付', 
                 paymentTimestamp: registrationTime 
             }; 
             setTimeout(() => { 
@@ -529,17 +533,18 @@
                     
                     if (order.status === '待揽件') {
                          pickupTimeHtml = `<div class="info-line"><span class="label">揽件时间:</span><span class="value">-</span></div>`;
-                    } else if (order.pickupTimestamp) { // Only show if pickup has happened (status is past '待揽件')
+                    } else if (order.pickupTimestamp) { 
                          pickupTimeHtml = `<div class="info-line"><span class="label">揽件时间:</span><span class="value">${new Date(order.pickupTimestamp).toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'})}</span></div>`;
                     }
 
 
                 } else { // cod
                     statusText = '已登记'; 
-                    statusClass = 'status-registered'; 
                     if (order.paymentStatus === '已支付') { 
                         statusText += ' (白条已付)';
                         statusClass = 'status-paid'; 
+                    } else {
+                        statusClass = 'status-registered';
                     }
                     amountDisplayHtml = `<div class="info-line"><span class="label">费用:</span><span class="value" style="color: #d93025; font-weight:500;">${order.amount}</span></div>`;
                     registrationMethodHtml = `<div class="info-line"><span class="label">登记方式:</span><span class="value">${order.registrationMethod || 'N/A'}</span></div>`;
@@ -598,6 +603,7 @@
                     <div class="detail-line"><span class="detail-label">实付金额:</span>${actualPaidDisplay}</div>
                     <div class="detail-line"><span class="detail-label">期望上门:</span><span class="detail-value">${order.pickupTime}</span></div>
                     <div class="detail-line"><span class="detail-label">下单时间:</span><span class="detail-value">${new Date(order.submissionTimestamp).toLocaleString('zh-CN')}</span></div>
+                    <div class="detail-line"><span class="detail-label">下单用户:</span><span class="detail-value">${order.orderUser || '-'}</span></div>
                     <div class="detail-line"><span class="detail-label">运单状态:</span><span class="detail-value">${order.status}</span></div>
                     <div class="detail-line"><span class="detail-label">揽件时间:</span><span class="detail-value">${pickupTimeDisplayDetail}</span></div>
                     <div class="detail-line"><span class="detail-label">白条支付状态:</span><span class="detail-value" style="color:${order.paymentStatus === '待支付' ? '#f5222d' : '#34a853'}">${order.paymentStatus}</span></div>
@@ -607,6 +613,7 @@
             } else { // cod
                 modalTitle.textContent = '到付登记详情'; 
                 const paymentTimeDisplayCod = order.paymentTimestamp ? new Date(order.paymentTimestamp).toLocaleString('zh-CN', { year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '-';
+                const registeredUserDisplay = order.registrationMethod === '人工登记' && order.registeredByUser ? order.registeredByUser : '-';
                 detailsHtml = `
                     <div class="detail-line"><span class="detail-label">运单号码:</span><span class="detail-value">${order.id}</span></div>
                     <div class="detail-line"><span class="detail-label">费用:</span><span class="detail-value" style="color:#d93025; font-weight:bold;">${order.amount}</span></div>
@@ -617,6 +624,7 @@
                     <div class="detail-line"><span class="detail-label">单位主体:</span><span class="detail-value">${order.company}</span></div>
                     <div class="detail-line"><span class="detail-label">所属部门:</span><span class="detail-value">${order.department}</span></div>
                     <div class="detail-line"><span class="detail-label">登记方式:</span><span class="detail-value">${order.registrationMethod}</span></div>
+                    <div class="detail-line"><span class="detail-label">登记用户:</span><span class="detail-value">${registeredUserDisplay}</span></div>
                     <div class="detail-line"><span class="detail-label">登记时间:</span><span class="detail-value">${new Date(order.registrationTimestamp).toLocaleString('zh-CN')}</span></div>
                     <div class="detail-line"><span class="detail-label">白条支付状态:</span><span class="detail-value" style="color:#34a853;">已支付</span></div>
                     <div class="detail-line"><span class="detail-label">支付时间:</span><span class="detail-value">${paymentTimeDisplayCod}</span></div>
@@ -640,10 +648,9 @@
                         orderToUpdate.paymentStatus = '已支付'; 
                         orderToUpdate.actualPaidAmount = orderToUpdate.estimatedPrice; 
                         orderToUpdate.paymentTimestamp = new Date().toISOString(); 
-                        if(orderToUpdate.status === '待揽件'){ // Only update to '已揽收' if it was '待揽件'
+                        if(orderToUpdate.status === '待揽件'){
                             orderToUpdate.status = '已揽收'; 
-                            // Simulate pickup time being shortly after payment for '待揽件' orders
-                            orderToUpdate.pickupTimestamp = new Date(new Date().getTime() + Math.random() * (60 * 60 * 1000) + (15 * 60 * 1000)).toISOString(); // 15 mins to 1hr 15 mins after payment
+                            orderToUpdate.pickupTimestamp = new Date(new Date(orderToUpdate.submissionTimestamp).getTime() + Math.random() * (3 * 60 * 60 * 1000) + (60 * 60 * 1000)).toISOString(); 
                         }
                     } 
                 } 
