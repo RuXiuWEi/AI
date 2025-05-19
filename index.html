@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <style>
-        /* --- Google/Gemini Inspired UI Refresh --- */
+        /* --- Google/Gemini Inspired UI Refresh (Copied from previous final mobile version) --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
         body { font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; background-color: #e8eaed; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 20px 0; }
         .app-container { width: 417px; height: 900px; background-color: #ffffff; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
@@ -68,6 +68,7 @@
         .order-card-id { font-size: 15px; font-weight: 500; color: #202124; }
         .order-card-status { font-size: 13px; padding: 3px 8px; border-radius: 4px; font-weight: 500; }
         .order-card-status.status-pending, .order-card-status.status-processing { background-color: #fef0e5; color: #f2994a; }
+        .order-card-status.status-awaiting-pickup { background-color: #fffbe6; color: #faad14; } 
         .order-card-status.status-shipped { background-color: #e6f7ff; color: #1890ff; }
         .order-card-status.status-delivered, .order-card-status.status-paid { background-color: #e6fffb; color: #13c2c2; }
         .order-card-status.status-registered { background-color: #f6ffed; color: #52c41a; }
@@ -339,35 +340,27 @@
         
         function isFieldValueValid(valueFromElementOrString) {
             let value = '';
-            if (typeof valueFromElementOrString === 'string') {
-                value = valueFromElementOrString.trim();
-            } else if (valueFromElementOrString && valueFromElementOrString.dataset && typeof valueFromElementOrString.dataset.value !== 'undefined') { 
-                value = valueFromElementOrString.dataset.value.trim();
-            } else if (valueFromElementOrString && valueFromElementOrString.querySelector) { 
-                 const valEl = valueFromElementOrString.querySelector('.value');
+            if (typeof valueFromElementOrString === 'string') { value = valueFromElementOrString.trim(); } 
+            else if (valueFromElementOrString && typeof valueFromElementOrString.value !== 'undefined') { value = valueFromElementOrString.value.trim(); } 
+            else if (valueFromElementOrString && valueFromElementOrString.dataset && typeof valueFromElementOrString.dataset.value !== 'undefined') { value = valueFromElementOrString.dataset.value.trim(); } 
+            else if (valueFromElementOrString && valueFromElementOrString.querySelector) { 
+                 const valueEl = valueFromElementOrString.querySelector('.value');
                  const placeholderEl = valueFromElementOrString.querySelector('.placeholder');
                  if (placeholderEl && getComputedStyle(placeholderEl).display !== 'none' && placeholderEl.textContent.includes("请选择")) return false;
-                 value = valEl ? valEl.textContent.trim() : '';
-            } else if (valueFromElementOrString && typeof valueFromElementOrString.value !== 'undefined') { 
-                value = valueFromElementOrString.value.trim();
+                 value = valueEl ? valueEl.textContent.trim() : '';
             }
             return value !== '' && !value.includes("请选择") && value !== "无可选部门";
         }
-
 
         function submitPackage() { 
             const senderName = document.getElementById('sender-name').value.trim(); 
             const senderPhone = document.getElementById('sender-phone').value.trim();
             const senderRegionEl = document.getElementById('sender-region');
-            const senderProvince = senderRegionEl.dataset.province; const senderCity = senderRegionEl.dataset.city;
-            const senderDistrict = senderRegionEl.dataset.district;
             const senderDetailAddress = document.getElementById('sender-detail-address').value.trim();
             
             const receiverName = document.getElementById('receiver-name').value.trim(); 
             const receiverPhone = document.getElementById('receiver-phone').value.trim();
             const receiverRegionEl = document.getElementById('receiver-region');
-            const receiverProvince = receiverRegionEl.dataset.province; const receiverCity = receiverRegionEl.dataset.city;
-            const receiverDistrict = receiverRegionEl.dataset.district;
             const receiverDetailAddress = document.getElementById('receiver-detail-address').value.trim();
             
             const locationRegion = document.getElementById('company-location-region').querySelector('.value').textContent.trim();
@@ -404,17 +397,21 @@
             
             showToast("正在下单..."); 
             const estimatedPriceVal = document.getElementById('estimated-price').textContent;
+            const submissionTime = new Date().toISOString();
             const packageData = { 
                 type: 'sent', id: 'SF' + Date.now(), 
-                senderDetails: { name: senderName, phone: senderPhone, province: senderProvince, city: senderCity, district: senderDistrict, detail: senderDetailAddress },
-                receiverDetails: { name: receiverName, phone: receiverPhone, province: receiverProvince, city: receiverCity, district: receiverDistrict, detail: receiverDetailAddress },
+                senderDetails: { name: senderName, phone: senderPhone, province: senderRegionEl.dataset.province, city: senderRegionEl.dataset.city, district: senderRegionEl.dataset.district, detail: senderDetailAddress },
+                receiverDetails: { name: receiverName, phone: receiverPhone, province: receiverRegionEl.dataset.province, city: receiverRegionEl.dataset.city, district: receiverRegionEl.dataset.district, detail: receiverDetailAddress },
                 locationRegion: locationRegion, companyEntity: companyEntity, companyDepartment: companyDepartment,
                 productType: productType, items: itemInfoText, 
                 estimatedPrice: estimatedPriceVal, 
-                actualPaidAmount: estimatedPriceVal, // Assume same as estimate initially
+                actualPaidAmount: estimatedPriceVal, // Will be updated on payment if different
                 pickupTime: pickupTimeDisplay.querySelector('.value').textContent, 
-                submissionTimestamp: new Date().toISOString(), status: '已揽收', paymentStatus: '待支付',
-                paymentTimestamp: null // Will be set on payment
+                submissionTimestamp: submissionTime, 
+                status: '待揽件', 
+                paymentStatus: '待支付',
+                pickupTimestamp: null, // Initially no pickup time
+                paymentTimestamp: null 
             }; 
             setTimeout(() => { 
                 showToast(`下单成功！运单号：${packageData.id}`); 
@@ -458,8 +455,8 @@
                 type: 'cod', id: trackingNumber.toUpperCase(), amount: `¥${parseFloat(amount).toFixed(2)}`, date: date, 
                 sender: sender, receiver: receiver, locationRegion: locationRegionCod, company: company, 
                 department: department, registrationTimestamp: registrationTime,
-                registrationMethod: '人工登记', paymentStatus: '已支付',
-                paymentTimestamp: registrationTime // For COD, payment time can be same as registration time
+                registrationMethod: '人工登记', paymentStatus: '已支付', 
+                paymentTimestamp: registrationTime 
             }; 
             setTimeout(() => { 
                 showToast(`到付信息登记成功: ${codData.id}`); 
@@ -512,10 +509,14 @@
 
                 let statusText = '', statusClass = '', amountDisplayHtml = '', dateTime = new Date(order.submissionTimestamp || order.registrationTimestamp).toLocaleString('zh-CN', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 let registrationMethodHtml = '';
+                let pickupTimeHtml = ''; 
 
                 if (order.type === 'sent') {
                     statusText = order.status;
-                    statusClass = order.status === '已签收' ? 'status-delivered' : order.status === '运输中' || order.status === '派送中' ? 'status-shipped' : 'status-processing';
+                    statusClass = order.status === '已签收' ? 'status-delivered' : 
+                                  order.status === '运输中' || order.status === '派送中' ? 'status-shipped' : 
+                                  order.status === '待揽件' ? 'status-awaiting-pickup' : 
+                                  'status-processing';
                     
                     amountDisplayHtml = `<div class="info-line"><span class="label">预估金额:</span><span class="value">${order.estimatedPrice}</span></div>`;
                     if (order.paymentStatus === '待支付') { 
@@ -525,10 +526,18 @@
                         statusText += ' (白条已付)'; statusClass = 'status-paid'; 
                         amountDisplayHtml += `<div class="info-line"><span class="label">实付金额:</span><span class="value" style="color: #d93025; font-weight:500;">${order.actualPaidAmount}</span></div>`;
                     }
+                    
+                    if (order.status === '待揽件') {
+                         pickupTimeHtml = `<div class="info-line"><span class="label">揽件时间:</span><span class="value">-</span></div>`;
+                    } else if (order.pickupTimestamp) { // Only show if pickup has happened (status is past '待揽件')
+                         pickupTimeHtml = `<div class="info-line"><span class="label">揽件时间:</span><span class="value">${new Date(order.pickupTimestamp).toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'})}</span></div>`;
+                    }
+
+
                 } else { // cod
                     statusText = '已登记'; 
-                    statusClass = 'status-registered'; // Default for COD
-                    if (order.paymentStatus === '已支付') { // Though COD is usually "paid" by receiver, we follow the new rule
+                    statusClass = 'status-registered'; 
+                    if (order.paymentStatus === '已支付') { 
                         statusText += ' (白条已付)';
                         statusClass = 'status-paid'; 
                     }
@@ -545,6 +554,7 @@
                         <div class="info-line"><span class="label">寄件人:</span><span class="value">${order.type === 'sent' ? (order.senderDetails?.name || 'N/A') : (order.sender || 'N/A')}</span></div>
                         <div class="info-line"><span class="label">收件人:</span><span class="value">${order.type === 'sent' ? (order.receiverDetails?.name || 'N/A') : (order.receiver || 'N/A')}</span></div>
                         ${amountDisplayHtml}
+                        ${order.type === 'sent' ? pickupTimeHtml : ''} 
                         ${registrationMethodHtml}
                     </div>
                     <div class="order-card-footer">${order.type === 'sent' ? '下单时间:' : '登记时间:'} ${dateTime}</div>`;
@@ -568,7 +578,8 @@
                 const senderAddr = `${order.senderDetails.province || ''} ${order.senderDetails.city || ''} ${order.senderDetails.district || ''} ${order.senderDetails.detail || ''}`.trim(); 
                 const receiverAddr = `${order.receiverDetails.province || ''} ${order.receiverDetails.city || ''} ${order.receiverDetails.district || ''} ${order.receiverDetails.detail || ''}`.trim(); 
                 const actualPaidDisplay = order.paymentStatus === '已支付' ? `<span class="detail-value" style="color:#d93025; font-weight:bold;">${order.actualPaidAmount}</span>` : '<span class="detail-value">-</span>';
-                const paymentTimeDisplay = order.paymentStatus === '已支付' && order.paymentTimestamp ? new Date(order.paymentTimestamp).toLocaleString('zh-CN') : '-';
+                const paymentTimeDisplay = order.paymentStatus === '已支付' && order.paymentTimestamp ? new Date(order.paymentTimestamp).toLocaleString('zh-CN', { year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '-';
+                const pickupTimeDisplayDetail = order.status === '待揽件' ? '-' : (order.pickupTimestamp ? new Date(order.pickupTimestamp).toLocaleString('zh-CN', { year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '-');
 
                 detailsHtml = `
                     <div class="detail-line"><span class="detail-label">运单号:</span><span class="detail-value">${order.id}</span></div>
@@ -585,16 +596,17 @@
                     <div class="detail-line"><span class="detail-label">物品信息:</span><span class="detail-value">${order.items}</span></div>
                     <div class="detail-line"><span class="detail-label">预估金额:</span><span class="detail-value">${order.estimatedPrice}</span></div>
                     <div class="detail-line"><span class="detail-label">实付金额:</span>${actualPaidDisplay}</div>
-                    <div class="detail-line"><span class="detail-label">上门时间:</span><span class="detail-value">${order.pickupTime}</span></div>
+                    <div class="detail-line"><span class="detail-label">期望上门:</span><span class="detail-value">${order.pickupTime}</span></div>
                     <div class="detail-line"><span class="detail-label">下单时间:</span><span class="detail-value">${new Date(order.submissionTimestamp).toLocaleString('zh-CN')}</span></div>
                     <div class="detail-line"><span class="detail-label">运单状态:</span><span class="detail-value">${order.status}</span></div>
+                    <div class="detail-line"><span class="detail-label">揽件时间:</span><span class="detail-value">${pickupTimeDisplayDetail}</span></div>
                     <div class="detail-line"><span class="detail-label">白条支付状态:</span><span class="detail-value" style="color:${order.paymentStatus === '待支付' ? '#f5222d' : '#34a853'}">${order.paymentStatus}</span></div>
                     <div class="detail-line"><span class="detail-label">支付时间:</span><span class="detail-value">${paymentTimeDisplay}</span></div>
                 `; 
                 if (order.paymentStatus === '待支付') { const payButton = document.createElement('button'); payButton.classList.add('btn', 'btn-primary'); payButton.textContent = '去支付'; payButton.style.marginLeft = '10px'; payButton.onclick = () => openBaiTiaoPaymentModal(order.id, order.type, order.estimatedPrice); modalFooter.appendChild(payButton); } 
             } else { // cod
                 modalTitle.textContent = '到付登记详情'; 
-                const paymentTimeDisplayCod = order.paymentTimestamp ? new Date(order.paymentTimestamp).toLocaleString('zh-CN') : '-'; // Should always have one for COD with new logic
+                const paymentTimeDisplayCod = order.paymentTimestamp ? new Date(order.paymentTimestamp).toLocaleString('zh-CN', { year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '-';
                 detailsHtml = `
                     <div class="detail-line"><span class="detail-label">运单号码:</span><span class="detail-value">${order.id}</span></div>
                     <div class="detail-line"><span class="detail-label">费用:</span><span class="detail-value" style="color:#d93025; font-weight:bold;">${order.amount}</span></div>
@@ -622,11 +634,18 @@
             showToast("正在处理支付..."); 
             setTimeout(() => { 
                 let orderToUpdate; 
-                if (orderType === 'sent') { orderToUpdate = sentOrders.find(o => o.id === orderId); } 
-                if (orderToUpdate) { 
-                    orderToUpdate.paymentStatus = '已支付'; 
-                    orderToUpdate.actualPaidAmount = orderToUpdate.estimatedPrice; // Simulate actual paid amount is same as estimate
-                    orderToUpdate.paymentTimestamp = new Date().toISOString(); // Record payment time
+                if (orderType === 'sent') { 
+                    orderToUpdate = sentOrders.find(o => o.id === orderId); 
+                    if (orderToUpdate) { 
+                        orderToUpdate.paymentStatus = '已支付'; 
+                        orderToUpdate.actualPaidAmount = orderToUpdate.estimatedPrice; 
+                        orderToUpdate.paymentTimestamp = new Date().toISOString(); 
+                        if(orderToUpdate.status === '待揽件'){ // Only update to '已揽收' if it was '待揽件'
+                            orderToUpdate.status = '已揽收'; 
+                            // Simulate pickup time being shortly after payment for '待揽件' orders
+                            orderToUpdate.pickupTimestamp = new Date(new Date().getTime() + Math.random() * (60 * 60 * 1000) + (15 * 60 * 1000)).toISOString(); // 15 mins to 1hr 15 mins after payment
+                        }
+                    } 
                 } 
                 closeModal('baitiao-payment-modal'); showToast("支付成功！"); 
                 renderOrderRecords(); 
