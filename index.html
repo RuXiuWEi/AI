@@ -406,10 +406,10 @@
                 locationRegion: locationRegion, companyEntity: companyEntity, companyDepartment: companyDepartment,
                 productType: productType, items: itemInfoText, 
                 estimatedPrice: estimatedPriceVal, 
-                actualPaidAmount: estimatedPriceVal, // Will be updated on payment if different
+                actualPaidAmount: estimatedPriceVal, 
                 pickupTime: pickupTimeDisplay.querySelector('.value').textContent, 
                 submissionTimestamp: submissionTime, 
-                orderUser: "李思思", // ADDED - Mocked user
+                orderUser: "李思思", 
                 status: '待揽件', 
                 paymentStatus: '待支付',
                 pickupTimestamp: null, 
@@ -458,7 +458,7 @@
                 sender: sender, receiver: receiver, locationRegion: locationRegionCod, company: company, 
                 department: department, registrationTimestamp: registrationTime,
                 registrationMethod: '人工登记', 
-                registeredByUser: '李思思', // ADDED - Mocked user for manual registration
+                registeredByUser: '李思思', 
                 paymentStatus: '已支付', 
                 paymentTimestamp: registrationTime 
             }; 
@@ -525,18 +525,19 @@
                     amountDisplayHtml = `<div class="info-line"><span class="label">预估金额:</span><span class="value">${order.estimatedPrice}</span></div>`;
                     if (order.paymentStatus === '待支付') { 
                         statusText += ' (白条待付)'; statusClass = 'status-unpaid';
-                        amountDisplayHtml += `<div class="info-line"><span class="label">实付金额:</span><span class="value">-</span></div>`;
+                        amountDisplayHtml += `<div class="info-line"><span class="label">应付金额:</span><span class="value">-</span></div>`;
                     } else if (order.paymentStatus === '已支付') { 
                         statusText += ' (白条已付)'; statusClass = 'status-paid'; 
-                        amountDisplayHtml += `<div class="info-line"><span class="label">实付金额:</span><span class="value" style="color: #d93025; font-weight:500;">${order.actualPaidAmount}</span></div>`;
+                        amountDisplayHtml += `<div class="info-line"><span class="label">应付金额:</span><span class="value" style="color: #d93025; font-weight:500;">${order.actualPaidAmount}</span></div>`;
                     }
                     
                     if (order.status === '待揽件') {
                          pickupTimeHtml = `<div class="info-line"><span class="label">揽件时间:</span><span class="value">-</span></div>`;
                     } else if (order.pickupTimestamp) { 
                          pickupTimeHtml = `<div class="info-line"><span class="label">揽件时间:</span><span class="value">${new Date(order.pickupTimestamp).toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'})}</span></div>`;
+                    } else { // Fallback if status is not '待揽件' but pickupTimestamp is still null (should ideally not happen)
+                        pickupTimeHtml = `<div class="info-line"><span class="label">揽件时间:</span><span class="value">-</span></div>`;
                     }
-
 
                 } else { // cod
                     statusText = '已登记'; 
@@ -600,7 +601,7 @@
                     <div class="detail-line"><span class="detail-label">产品类型:</span><span class="detail-value">${order.productType}</span></div>
                     <div class="detail-line"><span class="detail-label">物品信息:</span><span class="detail-value">${order.items}</span></div>
                     <div class="detail-line"><span class="detail-label">预估金额:</span><span class="detail-value">${order.estimatedPrice}</span></div>
-                    <div class="detail-line"><span class="detail-label">实付金额:</span>${actualPaidDisplay}</div>
+                    <div class="detail-line"><span class="detail-label">应付金额:</span>${actualPaidDisplay}</div>
                     <div class="detail-line"><span class="detail-label">期望上门:</span><span class="detail-value">${order.pickupTime}</span></div>
                     <div class="detail-line"><span class="detail-label">下单时间:</span><span class="detail-value">${new Date(order.submissionTimestamp).toLocaleString('zh-CN')}</span></div>
                     <div class="detail-line"><span class="detail-label">下单用户:</span><span class="detail-value">${order.orderUser || '-'}</span></div>
