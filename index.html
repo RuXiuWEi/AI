@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <style>
-        /* --- Google/Gemini Inspired UI Refresh (Copied from previous final mobile version) --- */
+        /* --- Google/Gemini Inspired UI Refresh --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
         body { font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; background-color: #e8eaed; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 20px 0; }
         .app-container { width: 417px; height: 900px; background-color: #ffffff; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
@@ -337,21 +337,21 @@
         }
         renderGenericList = function(items, searchTerm = '') { const listEl = document.getElementById('company-list-content'); listEl.innerHTML = ''; const filtered = items.filter(i => i.name.toLowerCase().includes(searchTerm.toLowerCase())); if (filtered.length === 0) { listEl.innerHTML = '<div class="modal-list-item" style="text-align:center; color:#5f6368;">无匹配结果</div>'; return; } filtered.forEach(item => { const div = document.createElement('div'); div.classList.add('modal-list-item'); div.textContent = item.name; div.onclick = () => selectGenericItem(item); listEl.appendChild(div); });}
         
-        // Simplified validation for clickable fields based on their displayed text
-        function isClickableFieldValid(elementId) {
-            const field = document.getElementById(elementId);
-            if (!field) return false;
-            const valueEl = field.querySelector('.value');
-            const placeholderEl = field.querySelector('.placeholder');
-
-            if (placeholderEl && getComputedStyle(placeholderEl).display !== 'none' && placeholderEl.textContent.includes("请选择")) {
-                return false; // Explicit "请选择" placeholder is showing
+        function isFieldValueValid(valueFromElementOrString) {
+            let value = '';
+            if (typeof valueFromElementOrString === 'string') {
+                value = valueFromElementOrString.trim();
+            } else if (valueFromElementOrString && valueFromElementOrString.dataset && typeof valueFromElementOrString.dataset.value !== 'undefined') { 
+                value = valueFromElementOrString.dataset.value.trim();
+            } else if (valueFromElementOrString && valueFromElementOrString.querySelector) { 
+                 const valEl = valueFromElementOrString.querySelector('.value');
+                 const placeholderEl = valueFromElementOrString.querySelector('.placeholder');
+                 if (placeholderEl && getComputedStyle(placeholderEl).display !== 'none' && placeholderEl.textContent.includes("请选择")) return false;
+                 value = valEl ? valEl.textContent.trim() : '';
+            } else if (valueFromElementOrString && typeof valueFromElementOrString.value !== 'undefined') { 
+                value = valueFromElementOrString.value.trim();
             }
-            if (valueEl && valueEl.textContent) {
-                const value = valueEl.textContent.trim();
-                return value !== '' && !value.includes("请选择") && value !== "无可选部门";
-            }
-            return false; // No value or placeholder indicates otherwise
+            return value !== '' && !value.includes("请选择") && value !== "无可选部门";
         }
 
 
@@ -375,7 +375,6 @@
             const companyDepartment = document.getElementById('company-department').querySelector('.value').textContent.trim();
             
             const pickupTimeDisplay = document.getElementById('pickup-time-display'); 
-            const pickupTimeValue = pickupTimeDisplay.dataset.value; 
             const productType = document.getElementById('product-type').value; 
             const itemInfoDisplay = document.getElementById('item-info-display');
             const itemInfoText = itemInfoDisplay.querySelector('.value')?.textContent || itemInfoDisplay.querySelector('.placeholder')?.textContent;
@@ -384,19 +383,19 @@
             let missingFields = [];
             if (!senderName) missingFields.push("寄件人姓名");
             if (!senderPhone) missingFields.push("寄件人手机");
-            if (!isClickableFieldValid('sender-region')) missingFields.push("寄件人所在地区");
+            if (!isFieldValueValid(senderRegionEl)) missingFields.push("寄件人所在地区");
             if (!senderDetailAddress) missingFields.push("寄件人详细地址");
 
             if (!receiverName) missingFields.push("收件人姓名");
             if (!receiverPhone) missingFields.push("收件人手机");
-            if (!isClickableFieldValid('receiver-region')) missingFields.push("收件人所在地区");
+            if (!isFieldValueValid(receiverRegionEl)) missingFields.push("收件人所在地区");
             if (!receiverDetailAddress) missingFields.push("收件人详细地址");
 
-            if (!isClickableFieldValid('company-location-region')) missingFields.push("寄件人所在区域");
-            if (!isClickableFieldValid('company-entity')) missingFields.push("单位主体");
-            if (!isClickableFieldValid('company-department')) missingFields.push("所属部门");
-            
-            if (!pickupTimeValue || pickupTimeValue.includes("请选择")) missingFields.push("期望上门时间"); // dataset.value should not have placeholder
+            if (!isFieldValueValid(locationRegion)) missingFields.push("寄件人所在区域");
+            if (!isFieldValueValid(companyEntity)) missingFields.push("单位主体");
+            if (!isFieldValueValid(companyDepartment)) missingFields.push("所属部门");
+
+            if (!isFieldValueValid(pickupTimeDisplay)) missingFields.push("期望上门时间");
             if (!productType) missingFields.push("产品类型"); 
             if (!itemInfoText || itemInfoText.includes("请选择")) missingFields.push("物品信息");
             
@@ -404,16 +403,18 @@
             if (!agreeTerms) { showToast("请阅读并同意服务条款！"); return; } 
             
             showToast("正在下单..."); 
+            const estimatedPriceVal = document.getElementById('estimated-price').textContent;
             const packageData = { 
                 type: 'sent', id: 'SF' + Date.now(), 
                 senderDetails: { name: senderName, phone: senderPhone, province: senderProvince, city: senderCity, district: senderDistrict, detail: senderDetailAddress },
                 receiverDetails: { name: receiverName, phone: receiverPhone, province: receiverProvince, city: receiverCity, district: receiverDistrict, detail: receiverDetailAddress },
                 locationRegion: locationRegion, companyEntity: companyEntity, companyDepartment: companyDepartment,
                 productType: productType, items: itemInfoText, 
-                estimatedPrice: document.getElementById('estimated-price').textContent, 
-                actualPaidAmount: document.getElementById('estimated-price').textContent, 
+                estimatedPrice: estimatedPriceVal, 
+                actualPaidAmount: estimatedPriceVal, // Assume same as estimate initially
                 pickupTime: pickupTimeDisplay.querySelector('.value').textContent, 
-                submissionTimestamp: new Date().toISOString(), status: '已揽收', paymentStatus: '待支付' 
+                submissionTimestamp: new Date().toISOString(), status: '已揽收', paymentStatus: '待支付',
+                paymentTimestamp: null // Will be set on payment
             }; 
             setTimeout(() => { 
                 showToast(`下单成功！运单号：${packageData.id}`); 
@@ -443,20 +444,22 @@
             if (!date) missingCodFields.push("到付日期");
             if (!sender) missingCodFields.push("寄件人");
             if (!receiver) missingCodFields.push("收件人");
-            if (!isClickableFieldValid('cod-location-region')) missingCodFields.push("COD所在区域");
-            if (!isClickableFieldValid('cod-company-entity')) missingCodFields.push("COD单位主体");
-            if (!isClickableFieldValid('cod-company-department')) missingCodFields.push("COD所属部门");
+            if (!isFieldValueValid(locationRegionCod)) missingCodFields.push("COD所在区域");
+            if (!isFieldValueValid(company)) missingCodFields.push("COD单位主体");
+            if (!isFieldValueValid(department)) missingCodFields.push("COD所属部门");
 
             if (missingCodFields.length > 0) { showToast(`请填写或选择: ${missingCodFields.join(', ')}`); return; }
             if (parseFloat(amount) <= 0) { showToast("金额必须大于0！"); return; } 
             if (!/^[a-zA-Z0-9]+$/.test(trackingNumber)) { showToast("运单号格式不正确。"); return; } 
             
             showToast("正在提交登记..."); 
+            const registrationTime = new Date().toISOString();
             const codData = { 
                 type: 'cod', id: trackingNumber.toUpperCase(), amount: `¥${parseFloat(amount).toFixed(2)}`, date: date, 
                 sender: sender, receiver: receiver, locationRegion: locationRegionCod, company: company, 
-                department: department, registrationTimestamp: new Date().toISOString(),
-                registrationMethod: '人工登记', paymentStatus: '已支付' 
+                department: department, registrationTimestamp: registrationTime,
+                registrationMethod: '人工登记', paymentStatus: '已支付',
+                paymentTimestamp: registrationTime // For COD, payment time can be same as registration time
             }; 
             setTimeout(() => { 
                 showToast(`到付信息登记成功: ${codData.id}`); 
@@ -472,6 +475,7 @@
         function initOrderRecordFilterTags() { const tags = document.querySelectorAll('.filter-tag'); tags.forEach(tag => { tag.addEventListener('click', function() { tags.forEach(t => t.classList.remove('active')); this.classList.add('active'); currentOrderRecordFilter = this.dataset.filterType; renderOrderRecords(); }); });}
         function filterOrderRecords() { renderOrderRecords(); }
         function applyOrderRecordFilter(filterType, clickedTagElement) { document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active')); if(clickedTagElement) clickedTagElement.classList.add('active'); currentOrderRecordFilter = filterType; renderOrderRecords(); }
+        
         function renderOrderRecords() {
             const searchTerm = document.getElementById('order-record-search-input').value.toLowerCase();
             const listContainer = document.getElementById('order-card-list-container');
@@ -506,25 +510,29 @@
                 card.classList.add('order-card');
                 card.onclick = () => showOrderDetailModal(order.id, order.type);
 
-                let statusText = '', statusClass = '', amountText = '', dateTime = new Date(order.submissionTimestamp || order.registrationTimestamp).toLocaleString('zh-CN', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+                let statusText = '', statusClass = '', amountDisplayHtml = '', dateTime = new Date(order.submissionTimestamp || order.registrationTimestamp).toLocaleString('zh-CN', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 let registrationMethodHtml = '';
 
                 if (order.type === 'sent') {
                     statusText = order.status;
-                    amountText = order.actualPaidAmount || order.estimatedPrice;
                     statusClass = order.status === '已签收' ? 'status-delivered' : order.status === '运输中' || order.status === '派送中' ? 'status-shipped' : 'status-processing';
-                    if (order.paymentStatus === '待支付') { statusText += ' (白条待付)'; statusClass = 'status-unpaid'; }
-                    else if (order.paymentStatus === '已支付') { statusText += ' (白条已付)'; statusClass = 'status-paid'; }
+                    
+                    amountDisplayHtml = `<div class="info-line"><span class="label">预估金额:</span><span class="value">${order.estimatedPrice}</span></div>`;
+                    if (order.paymentStatus === '待支付') { 
+                        statusText += ' (白条待付)'; statusClass = 'status-unpaid';
+                        amountDisplayHtml += `<div class="info-line"><span class="label">实付金额:</span><span class="value">-</span></div>`;
+                    } else if (order.paymentStatus === '已支付') { 
+                        statusText += ' (白条已付)'; statusClass = 'status-paid'; 
+                        amountDisplayHtml += `<div class="info-line"><span class="label">实付金额:</span><span class="value" style="color: #d93025; font-weight:500;">${order.actualPaidAmount}</span></div>`;
+                    }
                 } else { // cod
                     statusText = '已登记'; 
-                    // MODIFIED: Append payment status for COD card
-                    if (order.paymentStatus === '已支付') { // Assuming COD paymentStatus will be '已支付' or 'N/A'
+                    statusClass = 'status-registered'; // Default for COD
+                    if (order.paymentStatus === '已支付') { // Though COD is usually "paid" by receiver, we follow the new rule
                         statusText += ' (白条已付)';
-                        statusClass = 'status-paid'; // Use paid status color
-                    } else {
-                        statusClass = 'status-registered'; // Default registered color
+                        statusClass = 'status-paid'; 
                     }
-                    amountText = order.amount;
+                    amountDisplayHtml = `<div class="info-line"><span class="label">费用:</span><span class="value" style="color: #d93025; font-weight:500;">${order.amount}</span></div>`;
                     registrationMethodHtml = `<div class="info-line"><span class="label">登记方式:</span><span class="value">${order.registrationMethod || 'N/A'}</span></div>`;
                 }
                 
@@ -536,7 +544,7 @@
                     <div class="order-card-body">
                         <div class="info-line"><span class="label">寄件人:</span><span class="value">${order.type === 'sent' ? (order.senderDetails?.name || 'N/A') : (order.sender || 'N/A')}</span></div>
                         <div class="info-line"><span class="label">收件人:</span><span class="value">${order.type === 'sent' ? (order.receiverDetails?.name || 'N/A') : (order.receiver || 'N/A')}</span></div>
-                        <div class="info-line"><span class="label">${order.type === 'sent' ? '实付金额:' : '费用:'}</span><span class="value" style="color: #d93025; font-weight:500;">${amountText}</span></div>
+                        ${amountDisplayHtml}
                         ${registrationMethodHtml}
                     </div>
                     <div class="order-card-footer">${order.type === 'sent' ? '下单时间:' : '登记时间:'} ${dateTime}</div>`;
@@ -559,18 +567,71 @@
                 modalTitle.textContent = '寄件订单详情'; 
                 const senderAddr = `${order.senderDetails.province || ''} ${order.senderDetails.city || ''} ${order.senderDetails.district || ''} ${order.senderDetails.detail || ''}`.trim(); 
                 const receiverAddr = `${order.receiverDetails.province || ''} ${order.receiverDetails.city || ''} ${order.receiverDetails.district || ''} ${order.receiverDetails.detail || ''}`.trim(); 
-                detailsHtml = `<div class="detail-line"><span class="detail-label">运单号:</span><span class="detail-value">${order.id}</span></div><div class="detail-line"><span class="detail-label">寄件人:</span><span class="detail-value">${order.senderDetails.name} (${order.senderDetails.phone})</span></div><div class="detail-line"><span class="detail-label">寄件地址:</span><span class="detail-value">${senderAddr}</span></div><div class="detail-line"><span class="detail-label">所在区域:</span><span class="detail-value">${order.locationRegion || '-'}</span></div><div class="detail-line"><span class="detail-label">单位主体:</span><span class="detail-value">${order.companyEntity || '-'}</span></div><div class="detail-line"><span class="detail-label">所属部门:</span><span class="detail-value">${order.companyDepartment || '-'}</span></div><hr style="margin: 8px 0; border-color: #e8eaed; border-style: dashed;"><div class="detail-line"><span class="detail-label">收件人:</span><span class="detail-value">${order.receiverDetails.name} (${order.receiverDetails.phone})</span></div><div class="detail-line"><span class="detail-label">收件地址:</span><span class="detail-value">${receiverAddr}</span></div><hr style="margin: 8px 0; border-color: #e8eaed; border-style: dashed;"><div class="detail-line"><span class="detail-label">产品类型:</span><span class="detail-value">${order.productType}</span></div><div class="detail-line"><span class="detail-label">物品信息:</span><span class="detail-value">${order.items}</span></div><div class="detail-line"><span class="detail-label">实付金额:</span><span class="detail-value" style="color:#d93025; font-weight:bold;">${order.actualPaidAmount || order.estimatedPrice}</span></div><div class="detail-line"><span class="detail-label">上门时间:</span><span class="detail-value">${order.pickupTime}</span></div><div class="detail-line"><span class="detail-label">下单时间:</span><span class="detail-value">${new Date(order.submissionTimestamp).toLocaleString('zh-CN', { year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' })}</span></div><div class="detail-line"><span class="detail-label">运单状态:</span><span class="detail-value">${order.status}</span></div><div class="detail-line"><span class="detail-label">白条支付状态:</span><span class="detail-value" style="color:${order.paymentStatus === '待支付' ? '#f5222d' : '#34a853'}">${order.paymentStatus}</span></div>`; 
-                if (order.paymentStatus === '待支付') { const payButton = document.createElement('button'); payButton.classList.add('btn', 'btn-primary'); payButton.textContent = '去支付'; payButton.style.marginLeft = '10px'; payButton.onclick = () => openBaiTiaoPaymentModal(order.id, order.type, order.actualPaidAmount || order.estimatedPrice); modalFooter.appendChild(payButton); } 
+                const actualPaidDisplay = order.paymentStatus === '已支付' ? `<span class="detail-value" style="color:#d93025; font-weight:bold;">${order.actualPaidAmount}</span>` : '<span class="detail-value">-</span>';
+                const paymentTimeDisplay = order.paymentStatus === '已支付' && order.paymentTimestamp ? new Date(order.paymentTimestamp).toLocaleString('zh-CN') : '-';
+
+                detailsHtml = `
+                    <div class="detail-line"><span class="detail-label">运单号:</span><span class="detail-value">${order.id}</span></div>
+                    <div class="detail-line"><span class="detail-label">寄件人:</span><span class="detail-value">${order.senderDetails.name} (${order.senderDetails.phone})</span></div>
+                    <div class="detail-line"><span class="detail-label">寄件地址:</span><span class="detail-value">${senderAddr}</span></div>
+                    <div class="detail-line"><span class="detail-label">所在区域:</span><span class="detail-value">${order.locationRegion || '-'}</span></div>
+                    <div class="detail-line"><span class="detail-label">单位主体:</span><span class="detail-value">${order.companyEntity || '-'}</span></div>
+                    <div class="detail-line"><span class="detail-label">所属部门:</span><span class="detail-value">${order.companyDepartment || '-'}</span></div>
+                    <hr style="margin: 8px 0; border-color: #e8eaed; border-style: dashed;">
+                    <div class="detail-line"><span class="detail-label">收件人:</span><span class="detail-value">${order.receiverDetails.name} (${order.receiverDetails.phone})</span></div>
+                    <div class="detail-line"><span class="detail-label">收件地址:</span><span class="detail-value">${receiverAddr}</span></div>
+                    <hr style="margin: 8px 0; border-color: #e8eaed; border-style: dashed;">
+                    <div class="detail-line"><span class="detail-label">产品类型:</span><span class="detail-value">${order.productType}</span></div>
+                    <div class="detail-line"><span class="detail-label">物品信息:</span><span class="detail-value">${order.items}</span></div>
+                    <div class="detail-line"><span class="detail-label">预估金额:</span><span class="detail-value">${order.estimatedPrice}</span></div>
+                    <div class="detail-line"><span class="detail-label">实付金额:</span>${actualPaidDisplay}</div>
+                    <div class="detail-line"><span class="detail-label">上门时间:</span><span class="detail-value">${order.pickupTime}</span></div>
+                    <div class="detail-line"><span class="detail-label">下单时间:</span><span class="detail-value">${new Date(order.submissionTimestamp).toLocaleString('zh-CN')}</span></div>
+                    <div class="detail-line"><span class="detail-label">运单状态:</span><span class="detail-value">${order.status}</span></div>
+                    <div class="detail-line"><span class="detail-label">白条支付状态:</span><span class="detail-value" style="color:${order.paymentStatus === '待支付' ? '#f5222d' : '#34a853'}">${order.paymentStatus}</span></div>
+                    <div class="detail-line"><span class="detail-label">支付时间:</span><span class="detail-value">${paymentTimeDisplay}</span></div>
+                `; 
+                if (order.paymentStatus === '待支付') { const payButton = document.createElement('button'); payButton.classList.add('btn', 'btn-primary'); payButton.textContent = '去支付'; payButton.style.marginLeft = '10px'; payButton.onclick = () => openBaiTiaoPaymentModal(order.id, order.type, order.estimatedPrice); modalFooter.appendChild(payButton); } 
             } else { // cod
                 modalTitle.textContent = '到付登记详情'; 
-                // MODIFIED: Set paymentStatus to "已支付" for COD detail view
-                detailsHtml = `<div class="detail-line"><span class="detail-label">运单号码:</span><span class="detail-value">${order.id}</span></div><div class="detail-line"><span class="detail-label">费用:</span><span class="detail-value" style="color:#d93025; font-weight:bold;">${order.amount}</span></div><div class="detail-line"><span class="detail-label">到付日期:</span><span class="detail-value">${new Date(order.date).toLocaleDateString('zh-CN')}</span></div><div class="detail-line"><span class="detail-label">寄件人:</span><span class="detail-value">${order.sender}</span></div><div class="detail-line"><span class="detail-label">收件人:</span><span class="detail-value">${order.receiver}</span></div><div class="detail-line"><span class="detail-label">所在区域:</span><span class="detail-value">${order.locationRegion || '-'}</span></div><div class="detail-line"><span class="detail-label">单位主体:</span><span class="detail-value">${order.company}</span></div><div class="detail-line"><span class="detail-label">所属部门:</span><span class="detail-value">${order.department}</span></div><div class="detail-line"><span class="detail-label">登记方式:</span><span class="detail-value">${order.registrationMethod}</span></div><div class="detail-line"><span class="detail-label">登记时间:</span><span class="detail-value">${new Date(order.registrationTimestamp).toLocaleString('zh-CN', { year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' })}</span></div><div class="detail-line"><span class="detail-label">白条支付状态:</span><span class="detail-value" style="color:#34a853;">已支付</span></div>`; 
+                const paymentTimeDisplayCod = order.paymentTimestamp ? new Date(order.paymentTimestamp).toLocaleString('zh-CN') : '-'; // Should always have one for COD with new logic
+                detailsHtml = `
+                    <div class="detail-line"><span class="detail-label">运单号码:</span><span class="detail-value">${order.id}</span></div>
+                    <div class="detail-line"><span class="detail-label">费用:</span><span class="detail-value" style="color:#d93025; font-weight:bold;">${order.amount}</span></div>
+                    <div class="detail-line"><span class="detail-label">到付日期:</span><span class="detail-value">${new Date(order.date).toLocaleDateString('zh-CN')}</span></div>
+                    <div class="detail-line"><span class="detail-label">寄件人:</span><span class="detail-value">${order.sender}</span></div>
+                    <div class="detail-line"><span class="detail-label">收件人:</span><span class="detail-value">${order.receiver}</span></div>
+                    <div class="detail-line"><span class="detail-label">所在区域:</span><span class="detail-value">${order.locationRegion || '-'}</span></div>
+                    <div class="detail-line"><span class="detail-label">单位主体:</span><span class="detail-value">${order.company}</span></div>
+                    <div class="detail-line"><span class="detail-label">所属部门:</span><span class="detail-value">${order.department}</span></div>
+                    <div class="detail-line"><span class="detail-label">登记方式:</span><span class="detail-value">${order.registrationMethod}</span></div>
+                    <div class="detail-line"><span class="detail-label">登记时间:</span><span class="detail-value">${new Date(order.registrationTimestamp).toLocaleString('zh-CN')}</span></div>
+                    <div class="detail-line"><span class="detail-label">白条支付状态:</span><span class="detail-value" style="color:#34a853;">已支付</span></div>
+                    <div class="detail-line"><span class="detail-label">支付时间:</span><span class="detail-value">${paymentTimeDisplayCod}</span></div>
+                `; 
             } 
             detailContent.innerHTML = detailsHtml; openModal('order-detail-modal'); 
         }
         
         openBaiTiaoPaymentModal = function(orderId, orderType, amount) { document.getElementById('payment-order-id').value = orderId; document.getElementById('payment-order-type').value = orderType; document.getElementById('payment-amount-display').textContent = amount; document.getElementById('payment-company').selectedIndex = 0; closeModal('order-detail-modal'); openModal('baitiao-payment-modal'); }
-        submitBaiTiaoPayment = function() { const orderId = document.getElementById('payment-order-id').value; const orderType = document.getElementById('payment-order-type').value; const paymentCompany = document.getElementById('payment-company').value; if (!paymentCompany) { showToast("请选择付款企业！"); return; } showToast("正在处理支付..."); setTimeout(() => { let orderToUpdate; if (orderType === 'sent') { orderToUpdate = sentOrders.find(o => o.id === orderId); } if (orderToUpdate) { orderToUpdate.paymentStatus = '已支付'; } closeModal('baitiao-payment-modal'); showToast("支付成功！"); renderOrderRecords(); }, 1500); }
+        submitBaiTiaoPayment = function() { 
+            const orderId = document.getElementById('payment-order-id').value; 
+            const orderType = document.getElementById('payment-order-type').value; 
+            const paymentCompany = document.getElementById('payment-company').value; 
+            if (!paymentCompany) { showToast("请选择付款企业！"); return; } 
+            showToast("正在处理支付..."); 
+            setTimeout(() => { 
+                let orderToUpdate; 
+                if (orderType === 'sent') { orderToUpdate = sentOrders.find(o => o.id === orderId); } 
+                if (orderToUpdate) { 
+                    orderToUpdate.paymentStatus = '已支付'; 
+                    orderToUpdate.actualPaidAmount = orderToUpdate.estimatedPrice; // Simulate actual paid amount is same as estimate
+                    orderToUpdate.paymentTimestamp = new Date().toISOString(); // Record payment time
+                } 
+                closeModal('baitiao-payment-modal'); showToast("支付成功！"); 
+                renderOrderRecords(); 
+            }, 1500); 
+        }
         // --- (All other JS functions from previous final version are assumed to be here) ---
         populateProductTypes = function() { const select = document.getElementById('product-type'); select.innerHTML = ''; MOCK_PRODUCT_TYPES.forEach(type => { const option = document.createElement('option'); option.value = type; option.textContent = type; if (type === "顺丰标快") option.selected = true; select.appendChild(option); }); }
         setDefaultPickupTimeDisplay = function() { document.getElementById('pickup-time-display').innerHTML = `<span class="placeholder">请选择上门时间</span>`; }
