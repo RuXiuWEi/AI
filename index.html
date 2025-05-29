@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <style>
-        /* --- Google/Gemini Inspired UI Refresh (Copied from previous final mobile version) --- */
+        /* --- Google/Gemini Inspired UI Refresh --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
         body { font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; background-color: #e8eaed; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 20px 0; }
         .app-container { width: 417px; height: 900px; background-color: #ffffff; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
@@ -47,14 +47,12 @@
         .btn-small:hover { background-color: #3c4043; }
         .btn-link { background: none; border: none; color: #1a73e8; cursor: pointer; padding: 0; font-size: 14px; font-weight: 500; }
         .btn-link:hover { text-decoration: underline; }
+        .btn-danger-link { color: #d93025; } /* For cancel button */
         .bottom-nav { display: flex; width: 100%; border-top: 1px solid #dadce0; background-color: #ffffff; padding: 4px 0; }
         .nav-item { flex: 1; padding: 8px 0; text-align: center; cursor: pointer; color: #5f6368; font-size: 12px; font-weight: 400; border-radius: 8px; margin: 0 4px; transition: background-color 0.2s ease, color 0.2s ease; }
         .nav-item .nav-icon { font-size: 22px; display: block; margin-bottom: 2px; font-family: 'Material Icons'; }
         .nav-item.active { color: #1a73e8; background-color: #e8f0fe; }
         .nav-item:not(.active):hover { background-color: #f1f3f4; }
-        .message-list-item { background-color: #fff; padding: 16px; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .message-content { font-size: 15px; color: #202124; margin-bottom: 8px; line-height: 1.6; }
-        .message-time { font-size: 12px; color: #5f6368; text-align: right; }
         .order-records-header { margin-bottom: 16px; }
         .order-records-header input[type="search"] { width: 100%; padding: 12px 14px; border: 1px solid #dadce0; border-radius: 8px; font-size: 14px; background-color: #f1f3f4; margin-bottom: 12px; }
         .order-records-header input[type="search"]:focus { background-color: #fff; border-color: #1a73e8; box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2); }
@@ -76,7 +74,8 @@
         .order-card-body .info-line { display: flex; justify-content: space-between; font-size: 14px; color: #5f6368; margin-bottom: 6px; }
         .order-card-body .info-line .label { font-weight: 500; color: #3c4043; }
         .order-card-body .info-line .value { text-align: right; color: #202124; }
-        .order-card-footer { margin-top: 10px; text-align: right; font-size: 12px; color: #70757a; }
+        .order-card-footer { margin-top: 10px; display:flex; justify-content:space-between; align-items:center; font-size: 12px; color: #70757a; }
+        .order-card-actions button { font-size: 13px; padding: 4px 8px;}
         .no-records { text-align: center; color: #5f6368; padding: 30px 20px; font-size: 15px; }
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; padding: 20px; }
         .modal.active { display: flex; }
@@ -91,7 +90,7 @@
         .modal-list-item { padding: 12px 8px; border-bottom: 1px solid #f1f3f4; cursor: default; font-size: 15px; }
         .modal-list-item:hover { background-color: #f8f9fa; }
         .modal-list-item:last-child { border-bottom: none; }
-        .modal-footer { text-align: right; padding-top:16px; border-top:1px solid #e8eaed;}
+        .modal-footer { display: flex; justify-content: flex-end; padding-top:16px; border-top:1px solid #e8eaed;} /* Changed to flex for multiple buttons */
         .modal-footer .btn { width: auto; padding: 10px 20px; font-size: 14px; margin-left: 12px; }
         .address-item-details { cursor: pointer; padding: 4px 0; }
         .address-item-actions { margin-top: 8px; text-align: right; }
@@ -114,6 +113,22 @@
         .record-detail-modal-body .detail-value { color: #202124; flex-basis: 60%; word-break: break-word; text-align: right;}
         #toast-modal { align-items: center; background-color: transparent; pointer-events: none; padding-bottom: 30px; }
         #toast-message { background-color: #323232; color: white; padding: 12px 20px; border-radius: 24px; margin-bottom: 70px; font-size: 14px; pointer-events: all; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        
+        /* Cancel Shipment Modal Styles */
+        .cancel-reason-group { margin-bottom: 15px; }
+        .cancel-reason-group h5 { font-size: 15px; color: #3c4043; margin-bottom: 8px; font-weight: 500; }
+        .cancel-reason-group label {
+            display: block; /* Each radio on new line */
+            padding: 8px 0;
+            font-size: 14px;
+            color: #202124;
+            cursor: pointer;
+        }
+        .cancel-reason-group input[type="radio"] {
+            margin-right: 8px;
+            accent-color: #1a73e8;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -162,7 +177,10 @@
                     </div>
                     <div class="send-package-bottom-bar">
                         <div class="price-estimate">预估总价：<span id="estimated-price">¥0.00</span></div>
-                        <div class="terms-agreement"><input type="checkbox" id="agree-terms"><label for="agree-terms">阅读并同意<a href="#" onclick="alert('显示条款详情')">《XX服务条款》</a></label></div>
+                        <div class="terms-agreement">
+                            <input type="checkbox" id="agree-terms">
+                            <label for="agree-terms">阅读并同意<a href="#" onclick="alert('显示条款详情')">《电子运单契约条款》</a></label> <!-- MODIFIED TEXT -->
+                        </div>
                         <button id="submit-package-btn" class="btn" onclick="submitPackage()">立即下单</button>
                     </div>
                 </div>
@@ -217,6 +235,38 @@
     <div id="pickup-time-modal" class="modal"><div class="modal-content"><div class="modal-header"><h4>选择上门时间</h4><span class="modal-close-btn" onclick="closeModal('pickup-time-modal')">close</span></div><div class="pickup-time-modal-tabs"><div class="pickup-time-modal-tab active" data-day="today">今天</div><div class="pickup-time-modal-tab" data-day="tomorrow">明天</div><div class="pickup-time-modal-tab" data-day="dayAfterTomorrow">后天</div></div><div class="modal-body" id="pickup-time-slots-container-wrapper"><div id="pickup-time-slots-today" class="pickup-time-slots-for-day active"></div><div id="pickup-time-slots-tomorrow" class="pickup-time-slots-for-day"></div><div id="pickup-time-slots-dayAfterTomorrow" class="pickup-time-slots-for-day"></div></div></div></div>
     <div id="order-detail-modal" class="modal"><div class="modal-content"><div class="modal-header"><h4 id="order-detail-modal-title">订单详情</h4><span class="modal-close-btn" onclick="closeModal('order-detail-modal')">close</span></div><div class="modal-body record-detail-modal-body" id="order-detail-content"></div><div class="modal-footer" id="order-detail-modal-footer"><button class="btn btn-secondary" style="background-color: #dadce0; color: #202124;" onclick="closeModal('order-detail-modal')">关闭</button></div></div></div>
     <div id="baitiao-payment-modal" class="modal"><div class="modal-content"><div class="modal-header"><h4>白条支付</h4><span class="modal-close-btn" onclick="closeModal('baitiao-payment-modal')">close</span></div><div class="modal-body"><input type="hidden" id="payment-order-id"><input type="hidden" id="payment-order-type"><div class="form-group"><label>待支付金额</label><div id="payment-amount-display" style="font-size: 20px; font-weight: bold; color: #d93025; margin-bottom:10px;">¥0.00</div></div><div class="form-group"><label>支付方式</label><div class="payment-method">白条支付</div></div><div class="form-group"><label for="payment-company">付款企业</label><select id="payment-company"><option value="comp_x">XYZ科技公司</option><option value="comp_y">ABC集团</option><option value="comp_z">123物流</option></select></div></div><div class="modal-footer"><button class="btn btn-primary" onclick="submitBaiTiaoPayment()">确认支付</button></div></div></div>
+    
+    <!-- Cancel Shipment Modal -->
+    <div id="cancel-shipment-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h4>取消寄件</h4><span class="modal-close-btn" onclick="closeModal('cancel-shipment-modal')">close</span></div>
+            <div class="modal-body">
+                <input type="hidden" id="cancel-order-id">
+                <p style="margin-bottom: 15px; font-size: 15px; color: #3c4043;">请选择取消原因：</p>
+                <div class="cancel-reason-group">
+                    <h5>客户相关</h5>
+                    <label><input type="radio" name="cancelReason" value="换个时间再寄"> 换个时间再寄</label>
+                    <label><input type="radio" name="cancelReason" value="计划有变，不需要寄了"> 计划有变，不需要寄了</label>
+                    <label><input type="radio" name="cancelReason" value="去服务点自寄"> 去服务点自寄</label>
+                    <label><input type="radio" name="cancelReason" value="下单信息有误，需要修改"> 下单信息有误，需要修改</label>
+                    <label><input type="radio" name="cancelReason" value="觉得包装太贵"> 觉得包装太贵</label>
+                </div>
+                <div class="cancel-reason-group" style="margin-top: 20px;">
+                    <h5>快递员/服务相关</h5>
+                    <label><input type="radio" name="cancelReason" value="联系不上快递员/无人联系"> 联系不上快递员/无人联系</label>
+                    <label><input type="radio" name="cancelReason" value="送达时间达不到我的要求"> 送达时间达不到我的要求</label>
+                    <label><input type="radio" name="cancelReason" value="说我的东西不能寄"> 说我的东西不能寄</label>
+                    <label><input type="radio" name="cancelReason" value="运费太贵了"> 运费太贵了</label>
+                    <label><input type="radio" name="cancelReason" value="快递员未及时取件"> 快递员未及时取件</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" style="background-color: #dadce0; color: #202124;" onclick="closeModal('cancel-shipment-modal')">暂不取消</button>
+                <button class="btn btn-primary" style="background-color: #d93025;" onclick="submitCancelShipment()">确定取消</button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast-modal" class="modal" style="align-items: center; background-color: transparent; pointer-events: none; padding-bottom: 30px;"><div id="toast-message" style="background-color: #323232; color: white; padding: 12px 20px; border-radius: 24px; margin-bottom: 70px; font-size: 14px; pointer-events: all; box-shadow: 0 2px 10px rgba(0,0,0,0.2);"></div></div>
 
     <script>
@@ -237,6 +287,7 @@
         let editingAddressId = null, currentPickupTimeDay = 'today', currentRegionPickerTarget = null;
         let currentGenericSelectionTarget = null, currentGenericSelectionTargetElementId = null;
         let currentOrderRecordFilter = 'all';
+        let orderToCancelId = null;
 
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -394,7 +445,7 @@
             if (!itemInfoText || itemInfoText.includes("请选择")) missingFields.push("物品信息");
             
             if (missingFields.length > 0) { showToast(`请填写或选择: ${missingFields.join(', ')}`); return; }
-            if (!agreeTerms) { showToast("请阅读并同意服务条款！"); return; } 
+            if (!agreeTerms) { showToast("请阅读并同意《电子运单契约条款》！"); return; } // Updated terms text
             
             showToast("正在下单..."); 
             const estimatedPriceVal = document.getElementById('estimated-price').textContent;
@@ -413,7 +464,9 @@
                 status: '待揽件', 
                 paymentStatus: '待支付',
                 pickupTimestamp: null, 
-                paymentTimestamp: null 
+                paymentTimestamp: null,
+                cancellationReason: null,
+                cancellationTimestamp: null 
             }; 
             setTimeout(() => { 
                 showToast(`下单成功！运单号：${packageData.id}`); 
@@ -509,7 +562,11 @@
             filteredOrders.forEach(order => {
                 const card = document.createElement('div');
                 card.classList.add('order-card');
-                card.onclick = () => showOrderDetailModal(order.id, order.type);
+                // Card footer actions
+                let cardActionsHtml = '';
+                if (order.type === 'sent' && order.status === '待揽件') {
+                    cardActionsHtml = `<div class="order-card-actions"><button class="btn-link btn-danger-link" onclick="event.stopPropagation(); openCancelShipmentModal('${order.id}');">取消寄件</button></div>`;
+                }
 
                 let statusText = '', statusClass = '', amountDisplayHtml = '', dateTime = new Date(order.submissionTimestamp || order.registrationTimestamp).toLocaleString('zh-CN', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 let registrationMethodHtml = '';
@@ -517,17 +574,20 @@
 
                 if (order.type === 'sent') {
                     statusText = order.status;
-                    statusClass = order.status === '已签收' ? 'status-delivered' : 
+                    statusClass = order.status === '已取消' ? 'status-cancelled' : // Handle cancelled status
+                                  order.status === '已签收' ? 'status-delivered' : 
                                   order.status === '运输中' || order.status === '派送中' ? 'status-shipped' : 
                                   order.status === '待揽件' ? 'status-awaiting-pickup' : 
                                   'status-processing';
                     
                     amountDisplayHtml = `<div class="info-line"><span class="label">预估金额:</span><span class="value">${order.estimatedPrice}</span></div>`;
                     if (order.paymentStatus === '待支付') { 
-                        statusText += ' (白条待付)'; statusClass = 'status-unpaid';
+                        statusText += ' (白条待付)'; 
+                        if(order.status !== '已取消') statusClass = 'status-unpaid'; // Don't override cancelled status
                         amountDisplayHtml += `<div class="info-line"><span class="label">应付金额:</span><span class="value">-</span></div>`;
                     } else if (order.paymentStatus === '已支付') { 
-                        statusText += ' (白条已付)'; statusClass = 'status-paid'; 
+                        statusText += ' (白条已付)'; 
+                        if(order.status !== '已取消') statusClass = 'status-paid';
                         amountDisplayHtml += `<div class="info-line"><span class="label">应付金额:</span><span class="value" style="color: #d93025; font-weight:500;">${order.actualPaidAmount}</span></div>`;
                     }
                     
@@ -535,7 +595,7 @@
                          pickupTimeHtml = `<div class="info-line"><span class="label">揽件时间:</span><span class="value">-</span></div>`;
                     } else if (order.pickupTimestamp) { 
                          pickupTimeHtml = `<div class="info-line"><span class="label">揽件时间:</span><span class="value">${new Date(order.pickupTimestamp).toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'})}</span></div>`;
-                    } else { // Fallback if status is not '待揽件' but pickupTimestamp is still null (should ideally not happen)
+                    } else { 
                         pickupTimeHtml = `<div class="info-line"><span class="label">揽件时间:</span><span class="value">-</span></div>`;
                     }
 
@@ -551,19 +611,25 @@
                     registrationMethodHtml = `<div class="info-line"><span class="label">登记方式:</span><span class="value">${order.registrationMethod || 'N/A'}</span></div>`;
                 }
                 
+                // Card onclick should not trigger if cancel button is clicked
                 card.innerHTML = `
-                    <div class="order-card-header">
-                        <span class="order-card-id">运单号: ${order.id}</span>
-                        <span class="order-card-status ${statusClass}">${statusText}</span>
+                    <div onclick="showOrderDetailModal('${order.id}', '${order.type}')">
+                        <div class="order-card-header">
+                            <span class="order-card-id">运单号: ${order.id}</span>
+                            <span class="order-card-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="order-card-body">
+                            <div class="info-line"><span class="label">寄件人:</span><span class="value">${order.type === 'sent' ? (order.senderDetails?.name || 'N/A') : (order.sender || 'N/A')}</span></div>
+                            <div class="info-line"><span class="label">收件人:</span><span class="value">${order.type === 'sent' ? (order.receiverDetails?.name || 'N/A') : (order.receiver || 'N/A')}</span></div>
+                            ${amountDisplayHtml}
+                            ${order.type === 'sent' ? pickupTimeHtml : ''} 
+                            ${registrationMethodHtml}
+                        </div>
                     </div>
-                    <div class="order-card-body">
-                        <div class="info-line"><span class="label">寄件人:</span><span class="value">${order.type === 'sent' ? (order.senderDetails?.name || 'N/A') : (order.sender || 'N/A')}</span></div>
-                        <div class="info-line"><span class="label">收件人:</span><span class="value">${order.type === 'sent' ? (order.receiverDetails?.name || 'N/A') : (order.receiver || 'N/A')}</span></div>
-                        ${amountDisplayHtml}
-                        ${order.type === 'sent' ? pickupTimeHtml : ''} 
-                        ${registrationMethodHtml}
-                    </div>
-                    <div class="order-card-footer">${order.type === 'sent' ? '下单时间:' : '登记时间:'} ${dateTime}</div>`;
+                    <div class="order-card-footer">
+                        <span>${order.type === 'sent' ? '下单时间:' : '登记时间:'} ${dateTime}</span>
+                        ${cardActionsHtml}
+                    </div>`;
                 listContainer.appendChild(card);
             });
         }
@@ -609,8 +675,10 @@
                     <div class="detail-line"><span class="detail-label">揽件时间:</span><span class="detail-value">${pickupTimeDisplayDetail}</span></div>
                     <div class="detail-line"><span class="detail-label">白条支付状态:</span><span class="detail-value" style="color:${order.paymentStatus === '待支付' ? '#f5222d' : '#34a853'}">${order.paymentStatus}</span></div>
                     <div class="detail-line"><span class="detail-label">支付时间:</span><span class="detail-value">${paymentTimeDisplay}</span></div>
+                    ${order.cancellationReason ? `<div class="detail-line"><span class="detail-label">取消原因:</span><span class="detail-value" style="color:#d93025;">${order.cancellationReason}</span></div>` : ''}
+                    ${order.cancellationTimestamp ? `<div class="detail-line"><span class="detail-label">取消时间:</span><span class="detail-value">${new Date(order.cancellationTimestamp).toLocaleString('zh-CN')}</span></div>` : ''}
                 `; 
-                if (order.paymentStatus === '待支付') { const payButton = document.createElement('button'); payButton.classList.add('btn', 'btn-primary'); payButton.textContent = '去支付'; payButton.style.marginLeft = '10px'; payButton.onclick = () => openBaiTiaoPaymentModal(order.id, order.type, order.estimatedPrice); modalFooter.appendChild(payButton); } 
+                if (order.paymentStatus === '待支付' && order.status !== '已取消') { const payButton = document.createElement('button'); payButton.classList.add('btn', 'btn-primary'); payButton.textContent = '去支付'; payButton.style.marginLeft = '10px'; payButton.onclick = () => openBaiTiaoPaymentModal(order.id, order.type, order.estimatedPrice); modalFooter.appendChild(payButton); } 
             } else { // cod
                 modalTitle.textContent = '到付登记详情'; 
                 const paymentTimeDisplayCod = order.paymentTimestamp ? new Date(order.paymentTimestamp).toLocaleString('zh-CN', { year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '-';
@@ -634,8 +702,8 @@
             detailContent.innerHTML = detailsHtml; openModal('order-detail-modal'); 
         }
         
-        openBaiTiaoPaymentModal = function(orderId, orderType, amount) { document.getElementById('payment-order-id').value = orderId; document.getElementById('payment-order-type').value = orderType; document.getElementById('payment-amount-display').textContent = amount; document.getElementById('payment-company').selectedIndex = 0; closeModal('order-detail-modal'); openModal('baitiao-payment-modal'); }
-        submitBaiTiaoPayment = function() { 
+        function openBaiTiaoPaymentModal(orderId, orderType, amount) { document.getElementById('payment-order-id').value = orderId; document.getElementById('payment-order-type').value = orderType; document.getElementById('payment-amount-display').textContent = amount; document.getElementById('payment-company').selectedIndex = 0; closeModal('order-detail-modal'); openModal('baitiao-payment-modal'); }
+        function submitBaiTiaoPayment() { 
             const orderId = document.getElementById('payment-order-id').value; 
             const orderType = document.getElementById('payment-order-type').value; 
             const paymentCompany = document.getElementById('payment-company').value; 
@@ -659,6 +727,39 @@
                 renderOrderRecords(); 
             }, 1500); 
         }
+        
+        // --- Cancel Shipment Logic ---
+        function openCancelShipmentModal(orderId) {
+            orderToCancelId = orderId;
+            // Uncheck all radio buttons
+            document.querySelectorAll('#cancel-shipment-modal input[name="cancelReason"]').forEach(radio => radio.checked = false);
+            openModal('cancel-shipment-modal');
+        }
+
+        function submitCancelShipment() {
+            const selectedReasonRadio = document.querySelector('#cancel-shipment-modal input[name="cancelReason"]:checked');
+            if (!selectedReasonRadio) {
+                showToast("请选择一个取消原因。");
+                return;
+            }
+            const reason = selectedReasonRadio.value;
+            
+            const orderIndex = sentOrders.findIndex(o => o.id === orderToCancelId);
+            if (orderIndex > -1 && sentOrders[orderIndex].status === '待揽件') {
+                sentOrders[orderIndex].status = '已取消';
+                sentOrders[orderIndex].cancellationReason = reason;
+                sentOrders[orderIndex].cancellationTimestamp = new Date().toISOString();
+                
+                showToast(`订单 ${orderToCancelId} 已取消。`);
+                closeModal('cancel-shipment-modal');
+                renderOrderRecords(); // Refresh the list
+                orderToCancelId = null;
+            } else {
+                showToast("取消失败，订单状态可能已改变或未找到。");
+                closeModal('cancel-shipment-modal');
+            }
+        }
+
         // --- (All other JS functions from previous final version are assumed to be here) ---
         populateProductTypes = function() { const select = document.getElementById('product-type'); select.innerHTML = ''; MOCK_PRODUCT_TYPES.forEach(type => { const option = document.createElement('option'); option.value = type; option.textContent = type; if (type === "顺丰标快") option.selected = true; select.appendChild(option); }); }
         setDefaultPickupTimeDisplay = function() { document.getElementById('pickup-time-display').innerHTML = `<span class="placeholder">请选择上门时间</span>`; }
